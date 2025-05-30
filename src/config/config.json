@@ -5,6 +5,11 @@
     "database": "branchxdb",
     "host": "127.0.0.1",
     "dialect": "postgres"
+ //   "username": "admin",
+ //   "password": "admin123",
+ //   "database": "branchxdb",
+ //   "host": "localhost",
+ //   "dialect": "postgres" 
   },
   "test": {
     "username": "postgres",
