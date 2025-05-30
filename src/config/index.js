@@ -1,4 +1,3 @@
 module.exports={
-    ServiceConfig:require('./server-config'),
-    Logger:require('./logger'),
+    ServerConfig:require('./server-config'),
 }
