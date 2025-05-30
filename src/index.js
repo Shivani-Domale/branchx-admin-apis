@@ -1,9 +1,17 @@
+require('dotenv').config();
 const express = require('express');
-const { ServiceConfig } = require('./config');
 
-
+const { ServerConfig } = require('./config');
+const userRoutes = require('./routes/user.routes');
+const errorHandler = require('./middlewares/error.Handler');
+const logger = require('./config/logger');
 const app = express();
+app.use(express.json());
 
-app.listen(ServiceConfig.PORT, () => {
-    console.log(`BranchX Admin APIs listening on port ${ServiceConfig.PORT}`);
+app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
+app.use(errorHandler);
+
+app.listen(process.env.PORT, () => {
+logger.info(`Server is running on port ${process.env.PORT}`);
 });
