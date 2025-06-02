@@ -15,6 +15,7 @@ app.use("/api", apiRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api',apiRoutes)
 app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
