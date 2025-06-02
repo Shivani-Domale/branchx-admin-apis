@@ -1,0 +1,29 @@
+const nodemailer = require('nodemailer');
+const Logger = require('../config/logger');
+require('dotenv').config();
+
+
+module.exports = async (recipientEmail, resetCode) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_ADMIN,
+        pass: process.env.EMAIL_ADMIN_PASSWORD, // Use environment variables for security
+      },
+    });
+
+    const message = {
+      from: process.env.EMAIL_ADMIN,
+      to: recipientEmail, // <- this is dynamic!
+      subject: 'BranchX Admin - Password Reset Code',
+      text: `Your password reset code is: ${resetCode}\n\nUse this to reset your password. It expires in 15 minutes.`,
+    };
+
+    const info = await transporter.sendMail(message);
+    Logger.info(`Reset code email sent to ${recipientEmail} | ID: ${info.messageId}`);
+  } catch (error) {
+    Logger.error(`Failed to send reset code: ${error.message}`);
+    throw error;
+  }
+};
