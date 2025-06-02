@@ -1,21 +1,22 @@
 // utils/sendEmail.js
 const nodemailer = require('nodemailer');
-const Logger = require('../config/logger'); // Assuming you have a logger configured
-
+const Logger = require('../config/logger');
+require('dotenv').config();
 
 module.exports = async (user) => {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user:  process.env.ADMIN_EMAIL,
+        user: process.env.ADMIN_EMAIL,
         pass: process.env.ADMIN_PASSWORD,
       },
     });
 
     const message = {
-      from: process.env.ADMIN_EMAIL,
+      from: `"${user.fullName}" <${process.env.ADMIN_EMAIL}>`, // Gmail will use this sender
       to: process.env.ADMIN_EMAIL,
+      replyTo: user.email, // ✅ Makes replies go to the actual user
       subject: 'New Contact Form Submission',
       text: `New message from ${user.fullName}:
 
@@ -32,8 +33,7 @@ ${user.message}`,
     const info = await transporter.sendMail(message);
     Logger.info(`Email sent: ${info.messageId}`);
   } catch (error) {
-    logger.error(`Failed to send email: ${error.message}`);
-    throw error;  // rethrow to let controller handle the error if needed
+    Logger.error(`Failed to send email: ${error.message}`);
+    throw error;
   }
 };
-// This utility function sends an email using nodemailer  
