@@ -1,5 +1,6 @@
 const { sequelize } = require('../models');
 
+
 const getPendingCampaignsCount = async () => {
   try {
     const [countCampaigns] = await sequelize.query(
@@ -18,8 +19,15 @@ const getPendingCampaignsCount = async () => {
 
 const updateCampaignApprovalStatus = async (campaignId, status) => {
   try {
-    if (!['APPROVED', 'REJECTED'].includes(status)) {
+
+    if (!['APPROVE', 'REJECT'].includes(status)) {
       throw new Error('Invalid status. Must be APPROVED or REJECTED.');
+    }
+   if(status === 'APPROVE') 
+    {
+      status = 'APPROVED';
+    }else{
+      status = 'REJECTED';
     }
 
     await sequelize.query(
@@ -27,7 +35,7 @@ const updateCampaignApprovalStatus = async (campaignId, status) => {
        SET "isApproved" = :status
        WHERE "id" = :campaignId`,
       {
-        replacements: { status, campaignId },
+        replacements: {status , campaignId },
         type: sequelize.QueryTypes.UPDATE
       }
     );
@@ -41,6 +49,19 @@ const updateCampaignApprovalStatus = async (campaignId, status) => {
 };
 
 
+const getAllCampaigns = async () => {
+  try {
+    const [campaigns] = await sequelize.query(`
+      SELECT * FROM "Campaigns";
+    `);
+
+    return campaigns;
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    throw error;
+  }
+};
+
 module.exports = {
-  getPendingCampaignsCount,updateCampaignApprovalStatus
+  getPendingCampaignsCount,updateCampaignApprovalStatus,getAllCampaigns
 };

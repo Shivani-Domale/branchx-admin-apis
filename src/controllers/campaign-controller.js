@@ -33,6 +33,14 @@ const approveOrRejectCampaign = async (req, res) => {
   }
 };
 
+const fetchCampaigns = async (req, res) => {
+  try {
+    const campaigns = await CampaignService.getAllCampaigns();
+    res.status(200).json(campaigns);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
-    getCountPendingCampaigns,approveOrRejectCampaign
+    getCountPendingCampaigns,approveOrRejectCampaign,fetchCampaigns
 };
