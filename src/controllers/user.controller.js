@@ -53,7 +53,7 @@ const {status}  = req.body;
 const updateStatus = await userService.updateUserStatus(userId, status);
 
     return res.json({
-      message: "Campaign created successfully",
+      message: `${status} updated successfully`,
       success: true,
       status: 200
     });
