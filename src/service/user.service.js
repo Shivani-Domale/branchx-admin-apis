@@ -1,5 +1,7 @@
 const userRepository = require('../repositories/user.repository');
+const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const sendEmail = require('../utils/sendEmail');
+const bcrypt = require('bcryptjs');
 
 exports.createUser = async (data) => {
   const user = await userRepository.create(data);
@@ -17,7 +19,18 @@ exports.updateUserStatus = async (userId, status) => {
   if (!user) {
     throw new Error('User not found');
   }
-  user.status = status;
+user.status = status;
+
+  if(status ==='ACTIVE'){
+ const randomPassword = Math.random().toString(36).slice(-5);
+
+  const hashedPassword = await bcrypt.hash(randomPassword, 8);
+   console.log(randomPassword);
+   user.password = hashedPassword;
+    await sendCredentialsEmail(user,randomPassword);
+  }else{
+    user.password = null; 
+  }
   await user.save();
   return user; 
 } catch (error) { 
