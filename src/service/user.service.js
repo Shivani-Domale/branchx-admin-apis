@@ -10,3 +10,17 @@ exports.createUser = async (data) => {
 exports.getAllUsers = async () => {
   return await userRepository.getAllUsers();
 };
+
+exports.updateUserStatus = async (userId, status) => {
+  try{
+  const user = await userRepository.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  user.status = status;
+  await user.save();
+  return user; 
+} catch (error) { 
+  throw new Error(`Error updating user status: ${error.message}`);
+  }
+}

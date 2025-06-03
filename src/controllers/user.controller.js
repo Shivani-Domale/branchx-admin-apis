@@ -43,3 +43,21 @@ exports.getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+
+exports.updateUserStatus = async (req, res, next) => {  
+  try{
+const {userId} = req.params;
+const {status}  = req.body;
+
+const updateStatus = await userService.updateUserStatus(userId, status);
+
+    return res.json({
+      message: "Campaign created successfully",
+      success: true,
+      status: 200
+    });
+  } catch (error) { 
+  return res.status(500).json({ error: `Error updating user status: ${error.message}` });
+  }
+};
