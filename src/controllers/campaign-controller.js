@@ -41,6 +41,24 @@ const fetchCampaigns = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+const getCampaignDetailsById = async (req, res) => {  
+
+  const { campaignId } = req.params;
+  try{
+     const campaign  = await CampaignService.getCampaignByid(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' }); 
+    }
+    res.status(200).json(
+      {
+        campaign: campaign
+      }
+    );
+  }catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
-    getCountPendingCampaigns,approveOrRejectCampaign,fetchCampaigns
+    getCountPendingCampaigns,approveOrRejectCampaign,fetchCampaigns,getCampaignDetailsById
 };

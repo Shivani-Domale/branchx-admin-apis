@@ -62,6 +62,22 @@ const getAllCampaigns = async () => {
   }
 };
 
+const getCampaignByid = async (campaignId) => {
+  try {
+    const [campaign] = await sequelize.query(`
+      SELECT * FROM "Campaigns" WHERE "id" = :campaignId;
+    `, {
+      replacements: { campaignId },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    return campaign;
+  } catch (error) {
+    console.error('Error fetching campaign by ID:', error);
+    throw error;
+  }
+};
+
 module.exports = {
-  getPendingCampaignsCount,updateCampaignApprovalStatus,getAllCampaigns
+  getPendingCampaignsCount,updateCampaignApprovalStatus,getAllCampaigns,getCampaignByid
 };
