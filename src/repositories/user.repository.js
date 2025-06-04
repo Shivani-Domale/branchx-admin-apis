@@ -9,3 +9,7 @@ exports.create = async (data) => {
 exports.getAllUsers = async () => {
   return await User.findAll();
 };
+
+exports.findById = async (userId) => {
+  return await User.findByPk(userId);
+} 
