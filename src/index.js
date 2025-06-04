@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 
 const apiRoutes = require('./routes'); 
-const adminRoutes = require('./routes/admin.routes');
+const adminRoutes = require('./routes/admin-routes');
 const { ServerConfig } = require('./config');
 const userRoutes = require('./routes/v1/user.routes');
 const errorHandler = require('./middlewares/error.Handler');

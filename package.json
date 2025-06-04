@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
-    "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json"
+    "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json",
+    "seed:orgadmin": "node src/seeders/seedOrgAdmin.js"
   },
   "repository": {
     "type": "git",
