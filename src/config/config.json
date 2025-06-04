@@ -2,6 +2,7 @@
   "development": {
     "username": "branchxdb_owner",
     "password": "npg_jTXwO8a3AufG",
+
     "database": "branchxdb",
     "host": "ep-white-breeze-abravfmm-pooler.eu-west-2.aws.neon.tech",
     "dialect": "postgres",

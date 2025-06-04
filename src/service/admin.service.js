@@ -2,8 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { ServerConfig } = require('../config');
-const adminRepo = require('../repositories/admin.repository');
+const adminRepo = require('../repositories/admin-repository');
 const sendResetCodeEmail = require('../utils/sendResetCodeEmail');
+
+// Note: Org Admin (orgadmin@branchx.com) is seeded via a one-time script
+// located at src/seeders/seedOrgAdmin.js. It must exist in the database
+// to allow login and token generation for the Org Admin role.
+// npm run seed:orgadmin
+
 
 //// Register a new admin
 exports.registerAdmin = async ({ name, email, password }) => {
@@ -30,12 +36,14 @@ exports.loginAdmin = async ({ email, password }) => {
     }
     // Check if the email and password match the organization admin credentials
     if (email === ServerConfig.ORG_ADMIN_EMAIL && password === ServerConfig.ORG_ADMIN_PASSWORD) {
+    
+    const admin = await adminRepo.findByEmail(email);
     const token = jwt.sign(
-        { email, role: 'ORG_ADMIN' },
+        { id: admin.id, email: admin.email, role: admin.role },
         ServerConfig.JWT_SECRET,
         { expiresIn: '1h' }
     );
-    return { role: 'ORG_ADMIN', token };
+    return { role: admin.role, token };
     }
     // For other admins, check the database
     const admin = await adminRepo.findByEmail(email);
