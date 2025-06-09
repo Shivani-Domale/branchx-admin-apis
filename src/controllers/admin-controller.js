@@ -1,4 +1,4 @@
-const adminService = require('../service/admin.service');
+const { adminService } = require("../service");
 
 /*
 Shivani Domale

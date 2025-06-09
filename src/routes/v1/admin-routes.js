@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/admin-controller');
-const  isAdmin = require('../middlewares/auth-middleware');
-const verifyToken = require('../middlewares/verifyToken');
-const isOrgAdmin = require('../middlewares/isOrgAdmin');
+const { adminController } = require('../../controllers');
+
+const  isAdmin = require('../../middlewares/auth-middleware');
+const verifyToken = require('../../middlewares/verifyToken');
+const isOrgAdmin = require('../../middlewares/isOrgAdmin');
 
 // Create admin (only ORG_ADMINs can do this)
 router.post('/register', verifyToken, isOrgAdmin, adminController.registerAdmin);
