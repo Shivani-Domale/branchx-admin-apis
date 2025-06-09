@@ -1,4 +1,4 @@
-const userService = require('../service/user.service');
+const userService = require('../service/user-service');
 const logger = require('../config/logger');
 const sendEmail = require('../utils/sendEmail');
 

@@ -70,7 +70,7 @@ const getCampaignByid = async (campaignId) => {
       replacements: { campaignId },
       type: sequelize.QueryTypes.SELECT
     });
-
+   console.log('Fetched campaign:', campaign);
     return campaign;
   } catch (error) {
     console.error('Error fetching campaign by ID:', error);
