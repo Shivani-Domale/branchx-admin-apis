@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../../controllers/user-controller');
 const validateUser = require('../../middlewares/validate-User');
+const { UserController } = require('../../controllers');
 
 
 //router.post('/', validateUser, userController.createUser);
 
-router.get('/', userController.getAllUsers);
+router.get('/', UserController.getAllUsers);
 
-router.put('/:userId/status', userController.updateUserStatus);
+router.put('/:userId/status', UserController.updateUserStatus);
 
 module.exports = router;
 // This file defines the user routes for the BranchX Admin API.

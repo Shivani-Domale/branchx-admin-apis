@@ -1,10 +1,10 @@
-const userService = require('../service/user-service');
 const logger = require('../config/logger');
 const sendEmail = require('../utils/sendEmail');
+const { UserService } = require('../service');
 
 exports.createUser = async (req, res, next) => {
   try {
-    const user = await userService.createUser(req.body);
+    const user = await UserService.createUser(req.body);
     logger.info(`User created: ${user.id} - ${user.email}`);
 
     // Send notification email on new contact form submission

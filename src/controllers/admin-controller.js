@@ -1,4 +1,4 @@
-const { adminService } = require("../service");
+const { AdminService } = require("../service");
 
 /*
 Shivani Domale
@@ -8,7 +8,7 @@ Shivani Domale
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
   try {
-    const newAdmin = await adminService.registerAdmin(req.body);
+    const newAdmin = await AdminService.registerAdmin(req.body);
     res.status(201).json({ message: 'Admin registered successfully', data: newAdmin });
   } catch (err) {
     console.error("Registration error:", err.message);
