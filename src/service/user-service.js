@@ -1,4 +1,4 @@
-const userRepository = require('../repositories/user.repository');
+const userRepository = require('../repositories/user-repository');
 const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const sendEmail = require('../utils/sendEmail');
 const bcrypt = require('bcryptjs');
