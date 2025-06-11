@@ -29,6 +29,11 @@
 const deviceRepository = require('../repositories/device-repository');
 const { Location, Device } = require('../models');
 
+// Utility function to convert any string to 'Title Case' (e.g., 'mumbai' => 'Mumbai')
+const toTitleCase = (str) => {
+  return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+};
+
 exports.createDevice = async (data) => {
   const requiredFields = ['deviceType', 'price', 'deviceCount', 'availableCount', 'location'];
   for (const field of requiredFields) {
@@ -37,17 +42,20 @@ exports.createDevice = async (data) => {
     }
   }
 
-  // Find location by name (from frontend)
-  const locationRecord = await Location.findOne({ where: { city: data.location } });
+  // Normalize location format (Title Case)
+  const formattedLocation = toTitleCase(data.location.trim());
+
+  // Find location by city name (formatted)
+  const locationRecord = await Location.findOne({ where: { city: formattedLocation } });
 
   if (!locationRecord) {
-    throw new Error(`Location "${data.location}" not found`);
+    throw new Error(`Location "${formattedLocation}" not found`);
   }
 
   // Attach locationId to data
   data.locationId = locationRecord.id;
 
-  // Remove 'location' string to avoid issues
+  // Clean up
   delete data.location;
 
   return await deviceRepository.create(data);
