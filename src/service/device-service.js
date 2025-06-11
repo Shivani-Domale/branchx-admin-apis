@@ -37,7 +37,7 @@ const toTitleCase = (str) => {
 exports.createDevice = async (data) => {
   console.log(data);
   
-  const requiredFields = ['deviceType', 'price', 'deviceCount', 'availableCount', 'location'];
+  const requiredFields = ['deviceType', 'price', 'deviceCount', 'location'];
   for (const field of requiredFields) {
     if (!data[field]) {
       throw new Error(`${field} is required`);
@@ -56,7 +56,7 @@ exports.createDevice = async (data) => {
 
   // Attach locationId to data
   data.locationId = locationRecord.id;
-
+ data.availableCount = data.deviceCount; // Set availableCount to deviceCount initially
   // Clean up
   delete data.location;
 
