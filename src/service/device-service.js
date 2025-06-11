@@ -37,7 +37,7 @@ const toTitleCase = (str) => {
 exports.createDevice = async (data) => {
   console.log(data);
   
-  const requiredFields = ['deviceType', 'price', 'deviceCount', 'location'];
+  const requiredFields = ['deviceType', 'price', 'deviceCount','availableCount', 'location'];
   for (const field of requiredFields) {
     if (!data[field]) {
       throw new Error(`${field} is required`);
