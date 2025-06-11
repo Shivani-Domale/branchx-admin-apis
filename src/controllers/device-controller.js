@@ -30,6 +30,11 @@ exports.createDevice = async (req, res, next) => {
     }
 
     const device = await deviceService.createDevice(req.body);
+    if (!device) {
+      return res.status(500).json({
+        message: 'Failed to create device',
+      });
+    }
     res.status(201).json({
       message: 'Device created successfully',
       data: device,
