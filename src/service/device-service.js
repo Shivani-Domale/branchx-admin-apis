@@ -69,7 +69,11 @@ exports.createDevice = async (data) => {
     }
   }
 
-  return await deviceRepository.create(data);
+  const resposne  = await deviceRepository.create(data);
+  if(!resposne) {
+    throw new Error('Failed to create device');
+  }
+  return resposne;
 };
 
 exports.isDeviceExists = async (deviceType) => {
