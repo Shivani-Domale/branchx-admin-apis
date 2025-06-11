@@ -35,7 +35,7 @@ exports.createDevice = async (req, res, next) => {
         message: 'Failed to create device',
       });
     }
-    res.status(201).json({
+    return res.status(201).json({
       message: 'Device created successfully',
       data: device,
     });
