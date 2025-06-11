@@ -37,13 +37,10 @@ const toTitleCase = (str) => {
 exports.createDevice = async (data) => {
   console.log(data);
 
-  // If availableCount is not provided, set it equal to deviceCount
-  if (!data.availableCount && data.deviceCount) {
-    data.availableCount = data.deviceCount;
-  }
-
-
   // Normalize location format (Title Case)
+  if (!data.location) {
+    throw new Error('location is required');
+  }
   const formattedLocation = toTitleCase(data.location.trim());
 
   // Find location by city name (formatted)
@@ -56,13 +53,26 @@ exports.createDevice = async (data) => {
   // Attach locationId to data
   data.locationId = locationRecord.id;
 
-  // Clean up
+  // Remove 'location' string
   delete data.location;
+
+  // Set availableCount = deviceCount if not provided
+  if (!data.availableCount && data.deviceCount) {
+    data.availableCount = data.deviceCount;
+  }
+
+  // Validate required fields (excluding `availableCount`)
+  const requiredFields = ['deviceType', 'price', 'deviceCount', 'locationId'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new Error(`${field} is required`);
+    }
+  }
 
   return await deviceRepository.create(data);
 };
 
-exports.isDeviceExists = async (deviceType, deviceName) => {
+exports.isDeviceExists = async (deviceType) => {
   const device = await Device.findOne({
     where: { deviceType }
   });
