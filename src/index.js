@@ -7,6 +7,7 @@ const { ServerConfig } = require('./config');
 const userRoutes = require('./routes/v1/user-routes');
 const errorHandler = require('./middlewares/error-Handler');
 const logger = require('./config/logger');
+const deviceRoutes = require('./routes/v1/device-routes');
 const cors = require('cors');
 const app = express();
 
@@ -23,6 +24,9 @@ app.use(cors({
 app.use('/admin', adminRoutes);
 app.use('/api',apiRoutes)
 app.use(errorHandler);
+app.use('/api', deviceRoutes);
+
+
 
 app.listen(process.env.PORT, () => {
 console.log(`Server is running on port ${process.env.PORT}`);
