@@ -42,12 +42,6 @@ exports.createDevice = async (data) => {
     data.availableCount = data.deviceCount;
   }
 
-  const requiredFields = ['deviceType', 'price', 'deviceCount', 'locationName'];
-  for (const field of requiredFields) {
-    if (!data[field]) {
-      throw new Error(`${field} is required`);
-    }
-  }
 
   // Normalize location format (Title Case)
   const formattedLocation = toTitleCase(data.location.trim());
