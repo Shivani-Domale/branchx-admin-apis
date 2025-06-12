@@ -1,85 +1,72 @@
-//     const deviceRepository = require('../repositories/device-repository');
-// const { Location } = require('../models');
-// const { Device } = require('../models');
+// const deviceRepository = require('../repositories/device-repository');
+// const { Location, Device } = require('../models');
+
+// // Convert to title case (e.g., mumbai -> Mumbai)
+// const toTitleCase = (str) => {
+//   return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+// };
+
+// const validTypes = ['mobile', 'cube', 'cube pro', 'tv'];
+
+// exports.isDeviceExists = async (deviceType) => {
+//   const device = await Device.findOne({ where: { deviceType } });
+//   return !!device;
+// };
 
 // exports.createDevice = async (data) => {
-//   const requiredFields = ['deviceType', 'price', 'deviceCount', 'availableCount', 'locationId'];
-//   for (const field of requiredFields) {
-//     if (!data[field]) {
-//       throw new Error(`${field} is required`);
-//     }
+//   // Normalize location name
+//   const formattedLocation = toTitleCase(data.locationName.trim());
+
+//   // Find location
+//   const location = await Location.findOne({ where: { city: formattedLocation } });
+//   if (!location) {
+//     throw new Error(`Location "${formattedLocation}" not found`);
 //   }
 
-//   const locationExists = await Location.findByPk(data.locationId);
-//   if (!locationExists) {
-//     throw new Error(`Location with ID ${data.locationId} does not exist`);
+//   // Attach locationId
+//   data.locationId = location.id;
+
+//   // Set availableCount to deviceCount if not explicitly provided
+//   if (data.availableCount === undefined) {
+//     data.availableCount = data.deviceCount;
 //   }
+
+//   // Final cleanup
+//   delete data.locationName;
 
 //   return await deviceRepository.create(data);
 // };
 
-// exports.isDeviceExists = async (deviceType, deviceName) => {
-//   const device = await Device.findOne({
-//     where: { deviceType}
-//   });
-//   return !!device;
-// };
-
 
 const deviceRepository = require('../repositories/device-repository');
-const { Location, Device } = require('../models');
+const { Device, Location } = require('../models');
 
-// Utility function to convert any string to 'Title Case' (e.g., 'mumbai' => 'Mumbai')
-const toTitleCase = (str) => {
-  return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+exports.getLocationByCity = async (cityName) => {
+  return await Location.findOne({ where: { city: cityName } });
+};
+
+exports.isDeviceExists = async (deviceType, locationId) => {
+  const device = await Device.findOne({
+    where: {
+      deviceType,
+      locationId
+    }
+  });
+  return !!device;
 };
 
 exports.createDevice = async (data) => {
-  console.log(data);
-
-  // Ensure location is provided
-  if (!data.locationName ) {
-    throw new Error('location is required');
-  }
-
-  // Normalize location format (Title Case)
-  const formattedLocation = toTitleCase(data.locationName.trim());
-
-  // Find location by city name (formatted)
-  const locationRecord = await Location.findOne({ where: { city: formattedLocation } });
-
-  if (!locationRecord) {
-    throw new Error(`Location "${formattedLocation}" not found`);
-  }
-
-  // Attach locationId to data
-  data.locationId = locationRecord.id;
-
-
-
-  // Set availableCount = deviceCount if not provided (explicit check)
-  if (data.availableCount === undefined && data.deviceCount !== undefined) {
-    data.availableCount = data.deviceCount;
-  }
-
-  // Validate required fields (excluding availableCount since it's now handled)
-  const requiredFields = ['deviceType', 'price', 'deviceCount', 'locationName'];
+  const requiredFields = ['deviceType', 'price', 'deviceCount', 'availableCount', 'locationId'];
   for (const field of requiredFields) {
     if (!data[field]) {
       throw new Error(`${field} is required`);
     }
   }
 
-  const response = await deviceRepository.create(data);
-  if (!response) {
-    throw new Error('Failed to create device');
+  const locationExists = await Location.findByPk(data.locationId);
+  if (!locationExists) {
+    throw new Error(`Location with ID ${data.locationId} does not exist`);
   }
-  return response;
-};
 
-exports.isDeviceExists = async (deviceType) => {
-  const device = await Device.findOne({
-    where: { deviceType }
-  });
-  return !!device;
+  return await deviceRepository.create(data);
 };
