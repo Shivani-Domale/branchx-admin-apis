@@ -37,11 +37,13 @@ const toTitleCase = (str) => {
 exports.createDevice = async (data) => {
   console.log(data);
 
-  // Normalize location format (Title Case)
-  if (!data.location) {
+  // Ensure location is provided
+  if (!data.locationName) {
     throw new Error('location is required');
   }
-  const formattedLocation = toTitleCase(data.location.trim());
+
+  // Normalize location format (Title Case)
+  const formattedLocation = toTitleCase(data.locationName.trim());
 
   // Find location by city name (formatted)
   const locationRecord = await Location.findOne({ where: { city: formattedLocation } });
@@ -56,24 +58,24 @@ exports.createDevice = async (data) => {
   // Remove 'location' string
   delete data.location;
 
-  // Set availableCount = deviceCount if not provided
-  if (!data.availableCount && data.deviceCount) {
+  // Set availableCount = deviceCount if not provided (explicit check)
+  if (data.availableCount === undefined && data.deviceCount !== undefined) {
     data.availableCount = data.deviceCount;
   }
 
-  // Validate required fields (excluding `availableCount`)
-  const requiredFields = ['deviceType', 'price', 'deviceCount', 'locationId'];
+  // Validate required fields (excluding availableCount since it's now handled)
+  const requiredFields = ['deviceType', 'price', 'deviceCount', 'locationName'];
   for (const field of requiredFields) {
     if (!data[field]) {
       throw new Error(`${field} is required`);
     }
   }
 
-  const resposne  = await deviceRepository.create(data);
-  if(!resposne) {
+  const response = await deviceRepository.create(data);
+  if (!response) {
     throw new Error('Failed to create device');
   }
-  return resposne;
+  return response;
 };
 
 exports.isDeviceExists = async (deviceType) => {
