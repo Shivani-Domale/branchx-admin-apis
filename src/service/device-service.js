@@ -55,8 +55,7 @@ exports.createDevice = async (data) => {
   // Attach locationId to data
   data.locationId = locationRecord.id;
 
-  // Remove 'location' string
-  delete data.location;
+
 
   // Set availableCount = deviceCount if not provided (explicit check)
   if (data.availableCount === undefined && data.deviceCount !== undefined) {
