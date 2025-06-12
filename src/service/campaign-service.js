@@ -17,31 +17,67 @@ const getPendingCampaignsCount = async () => {
   }
 };
 
-const updateCampaignApprovalStatus = async (campaignId, status) => {
+// const updateCampaignApprovalStatus = async (campaignId, status) => {
+//   try {
+
+//     if (!['APPROVE', 'REJECT'].includes(status)) {
+//       throw new Error('Invalid status. Must be APPROVED or REJECTED.');
+//     }
+//    if(status === 'APPROVE') 
+//     {
+//       status = 'APPROVED';
+//     }else{
+//       status = 'REJECTED';
+//     }
+
+//     await sequelize.query(
+//       `UPDATE "Campaigns"
+//        SET "isApproved" = :status
+//        WHERE "id" = :campaignId`,
+//       {
+//         replacements: {status , campaignId },
+//         type: sequelize.QueryTypes.UPDATE
+//       }
+//     );
+
+//     console.log(`Campaign ID ${campaignId} marked as ${status}`);
+//     return { message: `Campaign updated to ${status}` };
+//   } catch (error) {
+//     console.error('Error updating campaign status:', error);
+//     throw error;
+//   }
+// };
+
+
+const updateCampaignApprovalStatus = async (campaignId, status, remark = null) => {
   try {
-
     if (!['APPROVE', 'REJECT'].includes(status)) {
-      throw new Error('Invalid status. Must be APPROVED or REJECTED.');
-    }
-   if(status === 'APPROVE') 
-    {
-      status = 'APPROVED';
-    }else{
-      status = 'REJECTED';
+      throw new Error('Invalid status. Must be APPROVE or REJECT.');
     }
 
+    const finalStatus = status === 'APPROVE' ? 'APPROVED' : 'REJECTED';
+
+    // Update campaign
     await sequelize.query(
-      `UPDATE "Campaigns"
-       SET "isApproved" = :status
-       WHERE "id" = :campaignId`,
+      `
+        UPDATE "Campaigns"
+        SET "isApproved" = :status,
+            "remark" = :remark
+        WHERE "id" = :campaignId
+      `,
       {
-        replacements: {status , campaignId },
+        replacements: {
+          status: finalStatus,
+          remark: finalStatus === 'REJECTED' ? remark : null,
+          campaignId
+        },
         type: sequelize.QueryTypes.UPDATE
       }
     );
 
-    console.log(`Campaign ID ${campaignId} marked as ${status}`);
-    return { message: `Campaign updated to ${status}` };
+    console.log(`Campaign ID ${campaignId} marked as ${finalStatus}`);
+    return { message: `Campaign updated to ${finalStatus}` };
+
   } catch (error) {
     console.error('Error updating campaign status:', error);
     throw error;
