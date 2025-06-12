@@ -21,17 +21,36 @@ const getCountPendingCampaigns = async (req, res) => {
     });
 };
 
+// const approveOrRejectCampaign = async (req, res) => {
+//   const { campaignId } = req.params;
+//   const { isApproved } = req.body; // Should be "APPROVED" or "REJECTED"
+
+//   try {
+//     const result = await CampaignService.updateCampaignApprovalStatus(campaignId, isApproved);
+//     res.status(200).json(result);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
 const approveOrRejectCampaign = async (req, res) => {
   const { campaignId } = req.params;
-  const { isApproved } = req.body; // Should be "APPROVED" or "REJECTED"
+  const { isApproved, remark } = req.body; // isApproved: "APPROVE" or "REJECT"
 
   try {
-    const result = await CampaignService.updateCampaignApprovalStatus(campaignId, isApproved);
+    const result = await CampaignService.updateCampaignApprovalStatus(
+      campaignId,
+      isApproved,
+      remark // optional message
+    );
+
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 const fetchCampaigns = async (req, res) => {
   try {
