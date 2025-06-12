@@ -37,6 +37,8 @@ const deviceService = require('../service/device-service');
 
 exports.createDevice = async (req, res, next) => {
   try {
+    console.log(req.body);
+    
     const inputType = req.body.deviceType?.trim();
     const normalizedType = inputType?.toLowerCase();
 
