@@ -38,7 +38,7 @@ exports.createDevice = async (data) => {
   console.log(data);
 
   // Ensure location is provided
-  if (!data.locationName) {
+  if (!data.locationName ) {
     throw new Error('location is required');
   }
 
