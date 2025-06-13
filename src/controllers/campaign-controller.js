@@ -21,17 +21,6 @@ const getCountPendingCampaigns = async (req, res) => {
     });
 };
 
-// const approveOrRejectCampaign = async (req, res) => {
-//   const { campaignId } = req.params;
-//   const { isApproved } = req.body; // Should be "APPROVED" or "REJECTED"
-
-//   try {
-//     const result = await CampaignService.updateCampaignApprovalStatus(campaignId, isApproved);
-//     res.status(200).json(result);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 
 const approveOrRejectCampaign = async (req, res) => {
@@ -42,7 +31,7 @@ const approveOrRejectCampaign = async (req, res) => {
     const result = await CampaignService.updateCampaignApprovalStatus(
       campaignId,
       isApproved,
-      remark // optional message
+      remark 
     );
 
     res.status(200).json(result);
