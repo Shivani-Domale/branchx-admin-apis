@@ -3,6 +3,7 @@ const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const sendEmail = require('../utils/sendEmail');
 const bcrypt = require('bcryptjs');
 
+
 exports.createUser = async (data) => {
   const user = await userRepository.create(data);
   await sendEmail(user);

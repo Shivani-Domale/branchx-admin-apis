@@ -35,7 +35,7 @@ exports.createUser = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await userService.getAllUsers();
+    const users = await UserService.getAllUsers();
     logger.info(`Retrieved all users. Count: ${users.length}`);
     res.status(200).json(users);
   } catch (error) {
@@ -50,7 +50,7 @@ exports.updateUserStatus = async (req, res, next) => {
 const {userId} = req.params;
 const {status}  = req.body;
 
-const updateStatus = await userService.updateUserStatus(userId, status);
+const updateStatus = await UserService.updateUserStatus(userId, status);
 
     return res.json({
       message: `${status} updated successfully`,
