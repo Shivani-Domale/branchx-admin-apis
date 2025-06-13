@@ -30,7 +30,7 @@ exports.loginAdmin = async (req, res) => {
 //Forgot Password - POST /admin/forgot-password
 exports.forgotPassword = async (req, res) => {
   try {
-    await adminService.forgotPassword(req.body.email);
+    await AdminService.forgotPassword(req.body.email);
     res.status(200).json({ message: 'Reset token sent to email' });
   } catch (err) {
     console.error('Forgot password error:', err.message);
@@ -41,7 +41,7 @@ exports.forgotPassword = async (req, res) => {
 //Verify Reset Code - POST /admin/verify-reset-code
 exports.verifyResetCode = async (req, res) => {
   try {
-    await adminService.verifyResetCode(req.body);
+    await AdminService.verifyResetCode(req.body);
     res.status(200).json({ message: 'Reset token verified successfully.' });
   } catch (err) {
     console.error('Verify token error:', err.message);
@@ -52,7 +52,7 @@ exports.verifyResetCode = async (req, res) => {
 //Reset Password  - POST /admin/reset-password
 exports.resetPassword = async (req, res) => {
   try {
-    await adminService.resetPassword(req.body);
+    await AdminService.resetPassword(req.body);
     res.status(200).json({ message: 'Password reset successful' });
   } catch (err) {
     console.error('Reset password error:', err.message);
