@@ -8,13 +8,20 @@ Shivani Domale
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
   try {
-    const newAdmin = await AdminService.registerAdmin(req.body);
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    const newAdmin = await AdminService.registerAdmin({ name, email });
     res.status(201).json({ message: 'Admin registered successfully', data: newAdmin });
   } catch (err) {
     console.error("Registration error:", err.message);
     res.status(400).json({ message: err.message || 'Internal Server Error' });
   }
 };
+
 
 //Admin Login - POST /admin/login
 exports.loginAdmin = async (req, res) => {
@@ -57,5 +64,17 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     console.error('Reset password error:', err.message);
     res.status(400).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+// Change Password - POST /admin/change-password
+exports.changePassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword } = req.body;
+
+    await AdminService.changePassword({ email, oldPassword, newPassword });
+    res.status(200).json({ message: 'Password changed successfully.' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
