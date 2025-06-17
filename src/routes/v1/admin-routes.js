@@ -22,4 +22,7 @@ router.post('/forgot-password', adminController.forgotPassword);
 router.post('/verify-reset-code', adminController.verifyResetCode);
 router.post('/reset-password', adminController.resetPassword);
 
+// Change password route
+router.post('/change-password', verifyToken, isAdmin, adminController.changePassword);
+
 module.exports = router;
