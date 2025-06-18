@@ -17,37 +17,6 @@ const getPendingCampaignsCount = async () => {
   }
 };
 
-// const updateCampaignApprovalStatus = async (campaignId, status) => {
-//   try {
-
-//     if (!['APPROVE', 'REJECT'].includes(status)) {
-//       throw new Error('Invalid status. Must be APPROVED or REJECTED.');
-//     }
-//    if(status === 'APPROVE') 
-//     {
-//       status = 'APPROVED';
-//     }else{
-//       status = 'REJECTED';
-//     }
-
-//     await sequelize.query(
-//       `UPDATE "Campaigns"
-//        SET "isApproved" = :status
-//        WHERE "id" = :campaignId`,
-//       {
-//         replacements: {status , campaignId },
-//         type: sequelize.QueryTypes.UPDATE
-//       }
-//     );
-
-//     console.log(`Campaign ID ${campaignId} marked as ${status}`);
-//     return { message: `Campaign updated to ${status}` };
-//   } catch (error) {
-//     console.error('Error updating campaign status:', error);
-//     throw error;
-//   }
-// };
-
 
 const updateCampaignApprovalStatus = async (campaignId, status, remark = null) => {
   try {
@@ -98,21 +67,6 @@ const getAllCampaigns = async () => {
   }
 };
 
-  // const getCampaignByid = async (campaignId) => {
-  //   try {
-  //     const [campaign] = await sequelize.query(`
-  //       SELECT * FROM "Campaigns" WHERE "id" = :campaignId;
-  //     `, {
-  //       replacements: { campaignId },
-  //       type: sequelize.QueryTypes.SELECT
-  //     });
-  //   console.log('Fetched campaign:', campaign);
-  //     return campaign;
-  //   } catch (error) {
-  //     console.error('Error fetching campaign by ID:', error);
-  //     throw error;
-  //   }
-  // };
 
   const getCampaignByid = async (campaignId) => {
   try {
