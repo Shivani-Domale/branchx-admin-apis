@@ -19,7 +19,7 @@ exports.registerAdmin = async (req, res) => {
 //Admin Login - POST /admin/login
 exports.loginAdmin = async (req, res) => {
   try {
-    const { role, token } = await adminService.loginAdmin(req.body);
+    const { role, token } = await AdminService.loginAdmin(req.body);
     res.status(200).json({ message: `${role} login successful`, token });
   } catch (err) {
     console.error("Login error:", err.message);
