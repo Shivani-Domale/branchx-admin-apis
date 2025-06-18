@@ -98,21 +98,50 @@ const getAllCampaigns = async () => {
   }
 };
 
-const getCampaignByid = async (campaignId) => {
+  // const getCampaignByid = async (campaignId) => {
+  //   try {
+  //     const [campaign] = await sequelize.query(`
+  //       SELECT * FROM "Campaigns" WHERE "id" = :campaignId;
+  //     `, {
+  //       replacements: { campaignId },
+  //       type: sequelize.QueryTypes.SELECT
+  //     });
+  //   console.log('Fetched campaign:', campaign);
+  //     return campaign;
+  //   } catch (error) {
+  //     console.error('Error fetching campaign by ID:', error);
+  //     throw error;
+  //   }
+  // };
+
+  const getCampaignByid = async (campaignId) => {
   try {
-    const [campaign] = await sequelize.query(`
-      SELECT * FROM "Campaigns" WHERE "id" = :campaignId;
+    const [results] = await sequelize.query(`
+      SELECT 
+        c.*,
+        p.product_type,
+        d."deviceType",
+        l."city"
+      FROM "Campaigns" c
+      LEFT JOIN "Products" p ON c."productId" = p."id"
+      LEFT JOIN "CampaignDeviceTypes" cdt ON c."id" = cdt."campaignId"
+      LEFT JOIN "Devices" d ON cdt."deviceTypeId" = d."id"
+      LEFT JOIN "CampaignLocations" cl ON c."id" = cl."campaignId"
+      LEFT JOIN "Locations" l ON cl."locationId" = l."id"
+      WHERE c."id" = :campaignId;
     `, {
       replacements: { campaignId },
       type: sequelize.QueryTypes.SELECT
     });
-   console.log('Fetched campaign:', campaign);
-    return campaign;
+
+    console.log("Fetched campaign details:", results);
+    return results;
   } catch (error) {
-    console.error('Error fetching campaign by ID:', error);
+    console.error("Error fetching full campaign details:", error);
     throw error;
   }
 };
+
 
 module.exports = {
   getPendingCampaignsCount,updateCampaignApprovalStatus,getAllCampaigns,getCampaignByid
