@@ -169,3 +169,43 @@ exports.changePassword = async ({ email, oldPassword, newPassword }) => {
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   await adminRepo.updateAdmin(admin, { password: hashedNewPassword });
 };
+
+//// Get Admin by ID
+exports.getAdminById = async (adminId) => {
+  if (!adminId) {
+    throw new Error('Admin ID is required');
+  }
+
+  const admin = await adminRepo.findById(adminId);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
+
+  return admin;
+};
+
+//// Get All Admins
+exports.getAllAdmins = async () => {
+  const admins = await adminRepo.findAll();
+  return admins;
+};
+
+//// Update Admin Details
+exports.updateAdminDetails = async (adminId, updateData) => {
+  if (!adminId || !updateData) {
+    throw new Error('Admin ID and update data are required');
+  }
+
+  const admin = await adminRepo.findById(adminId);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
+
+  // Prevent updating Org Admin details
+  if (admin.email === ServerConfig.ORG_ADMIN_EMAIL) {
+    throw new Error("Cannot update Org Admin details");
+  }
+
+  await adminRepo.updateAdmin(admin, updateData);
+  return { message: 'Admin details updated successfully' };
+};

@@ -2,13 +2,9 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Campaign extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Campaign.belongsToMany(models.Device, {
         through: 'CampaignDeviceTypes',
@@ -23,14 +19,14 @@ module.exports = (sequelize, DataTypes) => {
       Campaign.belongsTo(models.Product, {
         foreignKey: 'productId'
       });
-      
+
       Campaign.belongsTo(models.User, {
         foreignKey: 'userId',
-        as: 'user' // Optional alias
+        as: 'user'
       });
-
     }
   }
+
   Campaign.init({
     campaignName: DataTypes.STRING,
     campaignCode: DataTypes.STRING,
@@ -42,22 +38,41 @@ module.exports = (sequelize, DataTypes) => {
     demographic: DataTypes.STRING,
     duration: DataTypes.INTEGER,
     interval: DataTypes.INTEGER,
-    maxBidCap: DataTypes.INTEGER,
-    scheduleDate: DataTypes.STRING,
+    scheduleStartDate: DataTypes.STRING,
     scheduleEndDate: DataTypes.STRING,
     selectedDays: DataTypes.STRING,
     timeSlot: DataTypes.STRING,
-    status: DataTypes.BOOLEAN,
-    isApproved: DataTypes.STRING,
-    isPayment: DataTypes.BOOLEAN,
-    baseBid: DataTypes.INTEGER,
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    isApproved: {
+      type: DataTypes.STRING,
+      defaultValue: "PENDING"
+    },
+    isPayment: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    baseCost: DataTypes.INTEGER,
+    maxBid: DataTypes.INTEGER,
+    minBid: DataTypes.INTEGER,
     budgetLimit: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
     productId: DataTypes.INTEGER,
-    remark : DataTypes.STRING
+    remark: {
+      type: DataTypes.STRING,
+      defaultValue: null
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    deletedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Campaign',
+    paranoid: false // You can set this to true if using Sequelize's built-in soft delete
   });
 
   Campaign.addHook('beforeCreate', async (campaign, options) => {
@@ -80,6 +95,6 @@ module.exports = (sequelize, DataTypes) => {
 
     campaign.campaignCode = `${brandPrefix}${nextNumber}`;
   });
-
   return Campaign;
 };
+
