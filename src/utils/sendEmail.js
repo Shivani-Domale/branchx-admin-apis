@@ -1,6 +1,5 @@
-// utils/sendEmail.js
 const nodemailer = require('nodemailer');
-const Logger = require('../config/logger'); // Assuming you have a logger configured
+const Logger = require('../config/logger');
 
 
 module.exports = async (user) => {
