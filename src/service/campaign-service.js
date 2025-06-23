@@ -35,8 +35,7 @@ const getAllCampaigns = async () => {
   }
 };
 
-
-  const getCampaignByid = async (campaignId) => {
+const getCampaignByid = async (campaignId) => {
   try {
     const campaign = await campaignRepository.findById(campaignId);
     return campaign;
