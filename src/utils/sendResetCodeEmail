@@ -8,13 +8,13 @@ module.exports = async (recipientEmail, resetCode) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_ADMIN,
-        pass: process.env.EMAIL_ADMIN_PASSWORD, // Use environment variables for security
+        user: process.env.ADMIN_EMAIL,
+        pass: process.env.ADMIN_PASSWORD, // Use environment variables for security
       },
     });
 
     const message = {
-      from: process.env.EMAIL_ADMIN,
+      from: process.env.ADMIN_EMAIL,
       to: recipientEmail, // <- this is dynamic!
       subject: 'BranchX Admin - Password Reset Code',
       text: `Your password reset code is: ${resetCode}\n\nUse this to reset your password. It expires in 15 minutes.`,
