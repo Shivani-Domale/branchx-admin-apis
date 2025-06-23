@@ -15,7 +15,7 @@ class AdminRepository extends CrudRepository {
   }
 
   async createAdmin(adminData) {
-    return await this.create(adminData); // from crudRepository
+    return await this.create(adminData); 
   }
 
   async updateAdmin(adminInstance, updateData) {

@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js",
-    "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json",
-    "seed:orgadmin": "node src/seeders/seedOrgAdmin.js"
+  "test": "jest",
+  "dev": "nodemon src/index.js",
+  "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json",
+  "seed:orgadmin": "node src/seeders/seedOrgAdmin.js"
   },
   "repository": {
     "type": "git",
@@ -39,5 +39,8 @@
     "sequelize-cli": "^6.6.3",
     "uuid": "^11.1.0",
     "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.2"
   }
 }

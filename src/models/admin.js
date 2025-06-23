@@ -93,8 +93,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Admin',
     tableName: 'Admins',
-    timestamps: true,   // enables createdAt and updatedAt
-    paranoid: true      // enables soft delete using deletedAt
+    timestamps: true,
+    paranoid: true
   });
 
   return Admin;

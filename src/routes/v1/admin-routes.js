@@ -23,7 +23,7 @@ router.post('/reset-password', adminController.resetPassword);
 // Change password route
 router.post('/change-password', verifyToken, isAdmin, adminController.changePassword);
 
-// Get all admins — should be placed before dynamic /:id route
+// Get all admins 
 router.get('/get-all-admins', verifyToken, isOrgAdmin, adminController.getAllAdmins);
 
 // Get admin by ID (placed below '/')
