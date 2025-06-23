@@ -24,6 +24,7 @@ router.post('/reset-password', adminController.resetPassword);
 router.post('/change-password', verifyToken, isAdmin, adminController.changePassword);
 
 // Get all admins 
+// Get all admins
 router.get('/get-all-admins', verifyToken, isOrgAdmin, adminController.getAllAdmins);
 
 // Get admin by ID (placed below '/')
