@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Campaign',
-    paranoid: false // You can set this to true if using Sequelize's built-in soft delete
+    paranoid: false
   });
 
   Campaign.addHook('beforeCreate', async (campaign, options) => {

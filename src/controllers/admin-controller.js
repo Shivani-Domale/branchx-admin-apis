@@ -8,8 +8,9 @@ Shivani Domale
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
   try {
-    const { name, email } = req.body;
-
+    const name = req.body?.name;
+    const email = req.body?.email;
+    
     if (!name || !email) {
       return res.status(400).json({ message: 'Name and email are required' });
     }
@@ -17,8 +18,7 @@ exports.registerAdmin = async (req, res) => {
     const newAdmin = await AdminService.registerAdmin({ name, email });
     res.status(201).json({ message: 'Admin registered successfully', data: newAdmin });
   } catch (err) {
-    console.error("Registration error:", err.message);
-    res.status(400).json({ message: err.message || 'Internal Server Error' });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
@@ -29,64 +29,71 @@ exports.loginAdmin = async (req, res) => {
     const { role, token } = await AdminService.loginAdmin(req.body);
     res.status(200).json({ message: `${role} login successful`, token });
   } catch (err) {
-    console.error("Login error:", err.message);
-    res.status(400).json({ message: err.message || 'Internal Server Error' });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
-//Forgot Password - POST /admin/forgot-password
+// Forgot Password - POST /admin/forgot-password
 exports.forgotPassword = async (req, res) => {
   try {
-    await AdminService.forgotPassword(req.body.email);
+    const email = req.body?.email;
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    await AdminService.forgotPassword(email);
     res.status(200).json({ message: 'Reset token sent to email' });
   } catch (err) {
-    console.error('Forgot password error:', err.message);
-    res.status(400).json({ message: err.message || 'Internal Server Error' });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
-//Verify Reset Code - POST /admin/verify-reset-code
+// Verify Reset Code - POST /admin/verify-reset-code
 exports.verifyResetCode = async (req, res) => {
   try {
     await AdminService.verifyResetCode(req.body);
     res.status(200).json({ message: 'Reset token verified successfully.' });
   } catch (err) {
-    console.error('Verify token error:', err.message);
-    res.status(400).json({ message: err.message || 'Internal Server Error' });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
-//Reset Password  - POST /admin/reset-password
+// Reset Password  - POST /admin/reset-password
 exports.resetPassword = async (req, res) => {
   try {
     await AdminService.resetPassword(req.body);
     res.status(200).json({ message: 'Password reset successful' });
   } catch (err) {
-    console.error('Reset password error:', err.message);
-    res.status(400).json({ message: err.message || 'Internal Server Error' });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
 // Change Password - POST /admin/change-password
 exports.changePassword = async (req, res) => {
   try {
-    const { email, oldPassword, newPassword } = req.body;
+    const email = req.body?.email;
+    const oldPassword = req.body?.oldPassword;
+    const newPassword = req.body?.newPassword;
+
+    if (!email || !oldPassword || !newPassword) {
+      return res.status(400).json({ message: 'Email, old password, and new password are required' });
+    }
 
     await AdminService.changePassword({ email, oldPassword, newPassword });
     res.status(200).json({ message: 'Password changed successfully.' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
 // Get Admin by ID
 exports.getAdminById = async (req, res) => {
   try {
-    const admin = await AdminService.getAdminById(req.params.id);
+    const id = req.params?.id;
+    const admin = await AdminService.getAdminById(id);
     res.status(200).json({ data: admin });
   } catch (err) {
-    console.error('Get admin by ID error:', err.message);
-    res.status(404).json({ message: err.message });
+    res.status(404).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
@@ -96,18 +103,17 @@ exports.getAllAdmins = async (req, res) => {
     const admins = await AdminService.getAllAdmins();
     res.status(200).json({ data: admins });
   } catch (err) {
-    console.error('Get all admins error:', err.message);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err?.message || 'Internal Server Error' });
   }
 };
 
 // Update Admin Details
 exports.updateAdminDetails = async (req, res) => {
   try {
-    const result = await AdminService.updateAdminDetails(req.params.id, req.body);
+    const id = req.params?.id;
+    const result = await AdminService.updateAdminDetails(id, req.body);
     res.status(200).json(result);
   } catch (err) {
-    console.error('Update admin details error:', err.message);
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err?.message || 'Internal Server Error' });
   }
 };

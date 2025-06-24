@@ -5,4 +5,3 @@ module.exports = (req, res, next) => {
   }
   next();
 };
-// This middleware checks if all required fields are present in the request body
