@@ -1,4 +1,6 @@
+
 const { sequelize } = require("../models");
+
 const CampaignRepository = require("../repositories/campaign-repository");
 
 const campaignRepository = new CampaignRepository();
@@ -38,21 +40,10 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 };
 
 
-// const getAllCampaigns = async () => {
-//   try {
-//    const [campaigns] = await sequelize.query(
-//       `SELECT * FROM "Campaigns";
-//     `);
-
-//     return campaigns;
-//   } catch (error) {
-//     throw new Error(`Failed to fetch campaigns: ${error.message}`);
-//   }
-// };
-
 const getAllCampaigns = async () => {
   try {
-    // Step 1: Fetch all campaigns with productType from Product table
+
+    // Fetch all campaigns with productType from Product table
     const campaigns = await sequelize.query(`
       SELECT c.*, p.product_type AS "productType"
       FROM "Campaigns" c
@@ -62,7 +53,7 @@ const getAllCampaigns = async () => {
       type: sequelize.QueryTypes.SELECT
     });
 
-    // Step 2: Attach targetRegions and aDevices for each campaign
+    //  Attach targetRegions and aDevices for each campaign
     for (const campaign of campaigns) {
       // Fetch targetRegions (Locations)
       const locations = await sequelize.query(`
@@ -89,6 +80,7 @@ const getAllCampaigns = async () => {
       campaign.targetRegions = locations;
       campaign.aDevices = devices;
     }
+
 
     return campaigns;
   } catch (error) {
