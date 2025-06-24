@@ -1,24 +1,26 @@
-const {Admin} = require('../models');
+const { Admin } = require('../models');
+const CrudRepository = require('./crud-repository');
 
-const findByEmail = async (email) => {
-    return await Admin.findOne({ where: { email } });
-};
+class AdminRepository extends CrudRepository {
+  constructor() {
+    super(Admin);
+  }
 
-const findByEmailAndToken = async (email, token) => {
-    return await Admin.findOne({ where: { email, resetToken: token } });
-};
+  async findByEmail(email) {
+    return await this.model.findOne({ where: { email } });
+  }
 
-const createAdmin = async (adminData) => {
-    return await Admin.create(adminData);
-};
+  async findByEmailAndToken(email, token) {
+    return await this.model.findOne({ where: { email, resetToken: token } });
+  }
 
-const updateAdmin = async (adminInstance, updateData) => {
+  async createAdmin(adminData) {
+    return await this.create(adminData); // from crudRepository
+  }
+
+  async updateAdmin(adminInstance, updateData) {
     return await adminInstance.update(updateData);
-};
+  }
+}
 
-module.exports = {
-    findByEmail,
-    createAdmin,
-    updateAdmin,
-    findByEmailAndToken
-};
+module.exports = new AdminRepository();

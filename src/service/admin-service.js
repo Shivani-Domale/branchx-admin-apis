@@ -4,6 +4,12 @@ const crypto = require('crypto');
 const { ServerConfig } = require('../config');
 const adminRepo = require('../repositories/admin-repository');
 const sendResetCodeEmail = require('../utils/sendResetCodeEmail');
+const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
+
+// Generate a secure random password
+const generateRandomPassword = () => {
+  return crypto.randomBytes(8).toString('hex'); // 16 characters
+};
 
 // Note: Org Admin (orgadmin@branchx.com) is seeded via a one-time script
 // located at src/seeders/seedOrgAdmin.js. It must exist in the database
@@ -12,20 +18,31 @@ const sendResetCodeEmail = require('../utils/sendResetCodeEmail');
 
 
 //// Register a new admin
-exports.registerAdmin = async ({ name, email, password }) => {
-  // Validate input
-  if (!name || !email || !password) {
-    throw new Error('Name, email, and password are required');
+exports.registerAdmin = async ({ name, email }) => {
+  if (!name || !email) {
+    throw new Error('Name and email are required');
   }
-  // Check if the email is already registered
+
   const existingAdmin = await adminRepo.findByEmail(email);
   if (existingAdmin) {
     throw new Error('Email already registered');
   }
-  // Hash the password before saving
-  const hashedPassword = await bcrypt.hash(password, 10);
-  // Create the admin in the database
-  return adminRepo.createAdmin({ name, email, password: hashedPassword, role: 'ADMIN' });
+
+  // Generate random password and hash it
+  const plainPassword = generateRandomPassword();
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+  const newAdmin = await adminRepo.createAdmin({
+    name,
+    email,
+    password: hashedPassword,
+    role: 'ADMIN',
+  });
+
+  // Send credentials to the newly created admin
+  await sendCredentialsEmail({ email, fullName: name }, plainPassword);
+
+  return newAdmin;
 };
 
 //// Login admin
@@ -130,4 +147,65 @@ exports.resetPassword = async ({ email, resetToken, newPassword }) => {
     resetToken: null,
     resetTokenExpire: null,
   });
+};
+
+//// Change password for the admin
+exports.changePassword = async ({ email, oldPassword, newPassword }) => {
+  // Validate input
+  if (!email || !oldPassword || !newPassword) {
+    throw new Error('Email, old password, and new password are required');
+  }
+  // Fetch the admin by email
+  const admin = await adminRepo.findByEmail(email);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
+  // Check if the old password matches
+  const isMatch = await bcrypt.compare(oldPassword, admin.password);
+  if (!isMatch) {
+    throw new Error('Old password is incorrect');
+  }
+  // Hash the new password and update it
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  await adminRepo.updateAdmin(admin, { password: hashedNewPassword });
+};
+
+//// Get Admin by ID
+exports.getAdminById = async (adminId) => {
+  if (!adminId) {
+    throw new Error('Admin ID is required');
+  }
+
+  const admin = await adminRepo.findById(adminId);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
+
+  return admin;
+};
+
+//// Get All Admins
+exports.getAllAdmins = async () => {
+  const admins = await adminRepo.findAll();
+  return admins;
+};
+
+//// Update Admin Details
+exports.updateAdminDetails = async (adminId, updateData) => {
+  if (!adminId || !updateData) {
+    throw new Error('Admin ID and update data are required');
+  }
+
+  const admin = await adminRepo.findById(adminId);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
+
+  // Prevent updating Org Admin details
+  if (admin.email === ServerConfig.ORG_ADMIN_EMAIL) {
+    throw new Error("Cannot update Org Admin details");
+  }
+
+  await adminRepo.updateAdmin(admin, updateData);
+  return { message: 'Admin details updated successfully' };
 };

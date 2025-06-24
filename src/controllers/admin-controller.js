@@ -8,13 +8,20 @@ Shivani Domale
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
   try {
-    const newAdmin = await AdminService.registerAdmin(req.body);
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    const newAdmin = await AdminService.registerAdmin({ name, email });
     res.status(201).json({ message: 'Admin registered successfully', data: newAdmin });
   } catch (err) {
     console.error("Registration error:", err.message);
     res.status(400).json({ message: err.message || 'Internal Server Error' });
   }
 };
+
 
 //Admin Login - POST /admin/login
 exports.loginAdmin = async (req, res) => {
@@ -30,7 +37,7 @@ exports.loginAdmin = async (req, res) => {
 //Forgot Password - POST /admin/forgot-password
 exports.forgotPassword = async (req, res) => {
   try {
-    await adminService.forgotPassword(req.body.email);
+    await AdminService.forgotPassword(req.body.email);
     res.status(200).json({ message: 'Reset token sent to email' });
   } catch (err) {
     console.error('Forgot password error:', err.message);
@@ -41,7 +48,7 @@ exports.forgotPassword = async (req, res) => {
 //Verify Reset Code - POST /admin/verify-reset-code
 exports.verifyResetCode = async (req, res) => {
   try {
-    await adminService.verifyResetCode(req.body);
+    await AdminService.verifyResetCode(req.body);
     res.status(200).json({ message: 'Reset token verified successfully.' });
   } catch (err) {
     console.error('Verify token error:', err.message);
@@ -52,10 +59,55 @@ exports.verifyResetCode = async (req, res) => {
 //Reset Password  - POST /admin/reset-password
 exports.resetPassword = async (req, res) => {
   try {
-    await adminService.resetPassword(req.body);
+    await AdminService.resetPassword(req.body);
     res.status(200).json({ message: 'Password reset successful' });
   } catch (err) {
     console.error('Reset password error:', err.message);
     res.status(400).json({ message: err.message || 'Internal Server Error' });
+  }
+};
+
+// Change Password - POST /admin/change-password
+exports.changePassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword } = req.body;
+
+    await AdminService.changePassword({ email, oldPassword, newPassword });
+    res.status(200).json({ message: 'Password changed successfully.' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Get Admin by ID
+exports.getAdminById = async (req, res) => {
+  try {
+    const admin = await AdminService.getAdminById(req.params.id);
+    res.status(200).json({ data: admin });
+  } catch (err) {
+    console.error('Get admin by ID error:', err.message);
+    res.status(404).json({ message: err.message });
+  }
+};
+
+// Get All Admins
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await AdminService.getAllAdmins();
+    res.status(200).json({ data: admins });
+  } catch (err) {
+    console.error('Get all admins error:', err.message);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update Admin Details
+exports.updateAdminDetails = async (req, res) => {
+  try {
+    const result = await AdminService.updateAdminDetails(req.params.id, req.body);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Update admin details error:', err.message);
+    res.status(400).json({ message: err.message });
   }
 };

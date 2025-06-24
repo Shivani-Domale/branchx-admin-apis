@@ -7,12 +7,12 @@ module.exports = async (user,randomPassword) => {
       service: 'gmail',
       auth: {
         user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_PASSWORD,
+        pass: process.env.ADMIN_PASSWORD, 
       },
     });
 
     const message = {
-      from: process.env.ADMIN_EMAIL,
+      from: `"BranchX Admin" <${process.env.ADMIN_EMAIL}>`,
       to: user.email, // Send to the user's email
       subject: 'Your Account Credentials',
       text: `Hello ${user.fullName},
