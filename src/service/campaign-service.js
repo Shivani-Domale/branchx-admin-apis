@@ -45,12 +45,24 @@ const getAllCampaigns = async () => {
 
 const getCampaignByid = async (campaignId) => {
   try {
-    const campaign = await campaignRepository.findById(campaignId);
-    return campaign;
+    const [campaigns] = await sequelize.query(
+      `SELECT * FROM "Campaigns" WHERE id = :campaignId`, 
+      {
+        replacements: { campaignId },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    if (!campaigns) {
+      throw new Error("Campaign not found");
+    }
+
+    return campaigns;
   } catch (error) {
     throw new Error(`Failed to fetch campaign: ${error.message}`);
   }
 };
+
 
 
 module.exports = {
