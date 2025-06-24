@@ -1,6 +1,11 @@
 const Joi = require('joi');
 
-const validate = (schema) => {
+/**
+ * Validate request data using Joi schema.
+ * @param {Joi.Schema} schema - Joi schema
+ * @param {string} [property='body'] - Request property: 'body', 'params', 'query'
+ */
+const validate = (schema, property = 'body') => {
   return (req, res, next) => {
     const options = {
       abortEarly: false,
@@ -8,7 +13,7 @@ const validate = (schema) => {
       stripUnknown: true,
     };
 
-    const { error, value } = schema.validate(req.body, options);
+    const { error, value } = schema.validate(req[property], options);
 
     if (error) {
       return res.status(400).json({
@@ -17,7 +22,7 @@ const validate = (schema) => {
       });
     }
 
-    req.body = value; // sanitized and validated
+    req[property] = value; // sanitized and validated
     next();
   };
 };

@@ -1,25 +1,15 @@
-const express = require('express');
-const { CampaignController } = require('../../controllers');
-const validate = require('../../validator/validate');
-const campaignSchemas = require('../../validator/campaign-schemas');
+const Joi = require('joi');
 
-const router = express.Router();
+const campaignIdParam = Joi.object({
+  campaignId: Joi.number().integer().positive().required()
+});
 
-router.get('/pedingCampaignsCount', CampaignController.getCountPendingCampaigns);
+const campaignApproval = Joi.object({
+  isApproved: Joi.string().valid('APPROVE', 'REJECT').required(),
+  remark: Joi.string().allow('', null).optional()
+});
 
-router.put(
-  '/:campaignId/campaignApproval',
-  validate(campaignSchemas.campaignIdParam, 'params'),
-  validate(campaignSchemas.campaignApproval),
-  CampaignController.approveOrRejectCampaign
-);
-
-router.get('/getAllCampaigns', CampaignController.fetchCampaigns);
-
-router.get(
-  '/:campaignId/getCampaign',
-  validate(campaignSchemas.campaignIdParam, 'params'),
-  CampaignController.getCampaignDetailsById
-);
-
-module.exports = router;
+module.exports = {
+  campaignIdParam,
+  campaignApproval
+};
