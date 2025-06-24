@@ -1,3 +1,6 @@
+
+const { sequelize } = require("../models");
+
 const CampaignRepository = require("../repositories/campaign-repository");
 
 const campaignRepository = new CampaignRepository();
@@ -29,7 +32,12 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 
 const getAllCampaigns = async () => {
   try {
-    return await campaignRepository.findAll();
+
+   const [campaigns] = await sequelize.query(
+      `SELECT * FROM "Campaigns";
+    `);
+
+    return campaigns;
   } catch (error) {
     throw new Error(`Failed to fetch campaigns: ${error.message}`);
   }
@@ -46,8 +54,7 @@ const getCampaignByid = async (campaignId) => {
 
 
 module.exports = {
-  getPendingCampaignsCount,
-  updateCampaignApprovalStatus,
-  getAllCampaigns,
-  getCampaignByid
+
+  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignByid
+
 };
