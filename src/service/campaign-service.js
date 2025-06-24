@@ -1,4 +1,6 @@
+
 const { sequelize } = require("../models");
+
 const CampaignRepository = require("../repositories/campaign-repository");
 
 const campaignRepository = new CampaignRepository();
@@ -30,6 +32,7 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 
 const getAllCampaigns = async () => {
   try {
+
    const [campaigns] = await sequelize.query(
       `SELECT * FROM "Campaigns";
     `);
