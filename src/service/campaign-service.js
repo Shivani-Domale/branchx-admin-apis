@@ -9,7 +9,7 @@ const getPendingCampaignsCount = async () => {
        WHERE "isApproved" = 'PENDING';`
     );
 
-  //  console.log('Pending campaigns count:', countCampaigns[0].count);
+    //  console.log('Pending campaigns count:', countCampaigns[0].count);
     return countCampaigns[0].count;
   } catch (error) {
     console.error('Error fetching pending campaigns count:', error);
@@ -56,8 +56,8 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark = null) =
 
 const getAllCampaigns = async () => {
   try {
-    const [campaigns] = await sequelize.query(`
-      SELECT * FROM "Campaigns";
+    const [campaigns] = await sequelize.query(
+      `SELECT * FROM "Campaigns";
     `);
 
     return campaigns;
@@ -68,7 +68,7 @@ const getAllCampaigns = async () => {
 };
 
 
-  const getCampaignByid = async (campaignId) => {
+const getCampaignByid = async (campaignId) => {
   try {
     const [results] = await sequelize.query(`
       SELECT 
@@ -98,5 +98,5 @@ const getAllCampaigns = async () => {
 
 
 module.exports = {
-  getPendingCampaignsCount,updateCampaignApprovalStatus,getAllCampaigns,getCampaignByid
+  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignByid
 };
