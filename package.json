@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "test": "jest",
-  "dev": "nodemon src/index.js",
-  "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json",
-  "seed:orgadmin": "node src/seeders/seedOrgAdmin.js"
+    "test": "jest",
+    "dev": "nodemon src/index.js",
+    "migrate": "npx sequelize-cli db:migrate --migrations-path src/migrations --models-path src/models --config src/config/config.json",
+    "seed:orgadmin": "node src/seeders/seedOrgAdmin.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mime-types": "^3.0.1",
     "multer": "^2.0.1",
