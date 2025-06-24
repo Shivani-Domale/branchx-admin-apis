@@ -22,13 +22,23 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 
     const finalStatus = status === "APPROVE" ? "APPROVED" : "REJECTED";
 
-    await campaignRepository.updateApprovalStatus(campaignId, finalStatus, remark);
+    const [result] = await sequelize.query(`
+      UPDATE "Campaigns"
+      SET "isApproved" = :finalStatus,
+          "remark" = :remark,
+          "updatedAt" = NOW()
+      WHERE "id" = :campaignId
+    `, {
+      replacements: { campaignId, finalStatus, remark },
+      type: sequelize.QueryTypes.UPDATE
+    });
 
     return { message: `Campaign updated to ${finalStatus}` };
   } catch (error) {
     throw new Error(`Failed to update campaign: ${error.message}`);
   }
 };
+
 
 const getAllCampaigns = async () => {
   try {
