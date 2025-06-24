@@ -63,15 +63,13 @@ class crudRepository {
     }
 
     async findOne(where) {
-    try {
-        return await this.model.findOne({ where });
-    } catch (error) {
-        Logger.error("Error in findOne: ", error);
-        throw error;
+        try {
+            return await this.model.findOne({ where });
+        } catch (error) {
+            Logger.error("Error in findOne: ", error);
+            throw error;
+        }
     }
-}
-
-
 }
 
 module.exports = crudRepository;

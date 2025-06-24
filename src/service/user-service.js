@@ -26,7 +26,6 @@ user.status = status;
  const randomPassword = Math.random().toString(36).slice(-5);
 
   const hashedPassword = await bcrypt.hash(randomPassword, 8);
-   console.log(randomPassword);
    user.password = hashedPassword;
     await sendCredentialsEmail(user,randomPassword);
   }else{

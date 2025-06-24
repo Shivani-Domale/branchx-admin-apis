@@ -12,7 +12,7 @@ const seedOrgAdmin = async () => {
 
     const existingAdmin = await adminRepo.findByEmail(email);
     if (existingAdmin) {
-      console.log('Org Admin already exists');
+      error.log('Org Admin already exists');
       return;
     }
 
@@ -27,9 +27,8 @@ const seedOrgAdmin = async () => {
     };
 
     await adminRepo.createAdmin(newAdmin);
-    console.log('Org Admin seeded successfully');
   } catch (error) {
-    console.error('Error seeding Org Admin:', error);
+    error.log('Error seeding Org Admin:', error);
   } finally {
     await sequelize.close();
   }
