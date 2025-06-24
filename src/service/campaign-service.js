@@ -1,3 +1,6 @@
+
+const { sequelize } = require("../models");
+
 const CampaignRepository = require("../repositories/campaign-repository");
 
 const campaignRepository = new CampaignRepository();
@@ -19,7 +22,16 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 
     const finalStatus = status === "APPROVE" ? "APPROVED" : "REJECTED";
 
-    await campaignRepository.updateApprovalStatus(campaignId, finalStatus, remark);
+    const [result] = await sequelize.query(`
+      UPDATE "Campaigns"
+      SET "isApproved" = :finalStatus,
+          "remark" = :remark,
+          "updatedAt" = NOW()
+      WHERE "id" = :campaignId
+    `, {
+      replacements: { campaignId, finalStatus, remark },
+      type: sequelize.QueryTypes.UPDATE
+    });
 
     return { message: `Campaign updated to ${finalStatus}` };
   } catch (error) {
@@ -27,9 +39,50 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
   }
 };
 
+
 const getAllCampaigns = async () => {
   try {
-    return await campaignRepository.findAll();
+
+    // Fetch all campaigns with productType from Product table
+    const campaigns = await sequelize.query(`
+      SELECT c.*, p.product_type AS "productType"
+      FROM "Campaigns" c
+      LEFT JOIN "Products" p ON c."productId" = p.id
+      WHERE c."isDeleted" = false
+    `, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    //  Attach targetRegions and aDevices for each campaign
+    for (const campaign of campaigns) {
+      // Fetch targetRegions (Locations)
+      const locations = await sequelize.query(`
+        SELECT  l.city
+        FROM "Locations" l
+        INNER JOIN "CampaignLocations" cl ON cl."id" = l.id
+        WHERE cl."campaignId" = :campaignId
+      `, {
+        replacements: { campaignId: campaign.id },
+        type: sequelize.QueryTypes.SELECT
+      });
+
+      // Fetch aDevices (Devices)
+      const devices = await sequelize.query(`
+        SELECT d."deviceType"
+        FROM "Devices" d
+        INNER JOIN "CampaignDeviceTypes" cdt ON cdt."deviceTypeId" = d.id
+        WHERE cdt."campaignId" = :campaignId
+      `, {
+        replacements: { campaignId: campaign.id },
+        type: sequelize.QueryTypes.SELECT
+      });
+
+      campaign.targetRegions = locations;
+      campaign.aDevices = devices;
+    }
+
+
+    return campaigns;
   } catch (error) {
     throw new Error(`Failed to fetch campaigns: ${error.message}`);
   }
@@ -37,17 +90,28 @@ const getAllCampaigns = async () => {
 
 const getCampaignByid = async (campaignId) => {
   try {
-    const campaign = await campaignRepository.findById(campaignId);
-    return campaign;
+    const [campaigns] = await sequelize.query(
+      `SELECT * FROM "Campaigns" WHERE id = :campaignId`, 
+      {
+        replacements: { campaignId },
+        type: sequelize.QueryTypes.SELECT
+      }
+    );
+
+    if (!campaigns) {
+      throw new Error("Campaign not found");
+    }
+
+    return campaigns;
   } catch (error) {
     throw new Error(`Failed to fetch campaign: ${error.message}`);
   }
 };
 
 
+
 module.exports = {
-  getPendingCampaignsCount,
-  updateCampaignApprovalStatus,
-  getAllCampaigns,
-  getCampaignByid
+
+  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignByid
+
 };
