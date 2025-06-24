@@ -43,9 +43,44 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
 const getAllCampaigns = async () => {
   try {
 
-   const [campaigns] = await sequelize.query(
-      `SELECT * FROM "Campaigns";
-    `);
+    // Fetch all campaigns with productType from Product table
+    const campaigns = await sequelize.query(`
+      SELECT c.*, p.product_type AS "productType"
+      FROM "Campaigns" c
+      LEFT JOIN "Products" p ON c."productId" = p.id
+      WHERE c."isDeleted" = false
+    `, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    //  Attach targetRegions and aDevices for each campaign
+    for (const campaign of campaigns) {
+      // Fetch targetRegions (Locations)
+      const locations = await sequelize.query(`
+        SELECT  l.city
+        FROM "Locations" l
+        INNER JOIN "CampaignLocations" cl ON cl."id" = l.id
+        WHERE cl."campaignId" = :campaignId
+      `, {
+        replacements: { campaignId: campaign.id },
+        type: sequelize.QueryTypes.SELECT
+      });
+
+      // Fetch aDevices (Devices)
+      const devices = await sequelize.query(`
+        SELECT d."deviceType"
+        FROM "Devices" d
+        INNER JOIN "CampaignDeviceTypes" cdt ON cdt."deviceTypeId" = d.id
+        WHERE cdt."campaignId" = :campaignId
+      `, {
+        replacements: { campaignId: campaign.id },
+        type: sequelize.QueryTypes.SELECT
+      });
+
+      campaign.targetRegions = locations;
+      campaign.aDevices = devices;
+    }
+
 
     return campaigns;
   } catch (error) {
