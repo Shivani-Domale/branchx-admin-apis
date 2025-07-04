@@ -1,34 +1,35 @@
+
 const deviceRepository = require('../repositories/device-repository');
 
-const validTypes = ['mobile', 'cube', 'cube pro', 'tv', 'billboard'];
-
-const properCaseMap = {
-  'mobile': 'Mobile',
-  'cube': 'Cube',
-  'cube pro': 'Cube Pro',
-  'tv': 'TV',
-  'billboard': 'Billboard',
-};
+const validOrientations = ['Horizontal', 'Vertical'];
 
 exports.createDevice = async (data) => {
   try {
-    const inputType = data?.deviceType?.trim()?.toLowerCase();
+    const {
+      deviceName,
+      resolutionHeight,
+      resolutionWidth,
+      orientation,
+      locationName
+    } = data;
 
-    if (!validTypes.includes(inputType)) {
-      const error = new Error(`Invalid deviceType. Allowed types are: ${validTypes.join(', ')}`);
+    // Validate orientation
+    const cleanOrientation = orientation?.trim();
+    if (!validOrientations.includes(cleanOrientation)) {
+      const error = new Error(`Invalid orientation. Allowed values are: ${validOrientations.join(', ')}`);
       error.statusCode = 400;
       throw error;
     }
 
-    const deviceType = properCaseMap[inputType];
-
-    const formattedCity = data?.locationName?.trim()?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
+    // Format city
+    const formattedCity = locationName?.trim()?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
     if (!formattedCity) {
       const error = new Error('Location name is required');
       error.statusCode = 400;
       throw error;
     }
 
+    // Get location by city
     const location = await deviceRepository.getLocationByCity(formattedCity);
     if (!location) {
       const error = new Error(`Location "${formattedCity}" not found`);
@@ -36,16 +37,20 @@ exports.createDevice = async (data) => {
       throw error;
     }
 
-    const deviceExists = await deviceRepository.isDeviceExists(deviceType, location?.id);
+    // Check if device with same name and location already exists
+    const deviceExists = await deviceRepository.isDeviceExists(deviceName, location?.id);
     if (deviceExists) {
-      const error = new Error(`${deviceType} already exists in ${formattedCity}`);
+      const error = new Error(`${deviceName} already exists in ${formattedCity}`);
       error.statusCode = 400;
       throw error;
     }
 
+    // Create device
     const newDevice = await deviceRepository.create({
-      deviceType,
-      price: data?.price,
+      deviceName: deviceName?.trim(),
+      resolutionHeight: parseInt(resolutionHeight),
+      resolutionWidth: parseInt(resolutionWidth),
+      orientation: cleanOrientation,
       locationId: location?.id,
     });
 
