@@ -1,10 +1,11 @@
+
 const { sequelize } = require('../models');
 
-// Get location by city
+//  Get location by city
 exports.getLocationByCity = async (city) => {
   try {
     const [result] = await sequelize.query(
-      `SELECT * FROM "Locations" WHERE city = :city LIMIT 1`,
+      `SELECT * FROM "Locations" WHERE "city" = :city LIMIT 1`,
       {
         replacements: { city },
         type: sequelize.QueryTypes.SELECT,
@@ -17,13 +18,15 @@ exports.getLocationByCity = async (city) => {
   }
 };
 
-// Check if device exists
-exports.isDeviceExists = async (deviceType, locationId) => {
+//  Check if device exists by deviceName + locationId
+exports.isDeviceExists = async (deviceName, locationId) => {
   try {
     const [result] = await sequelize.query(
-      `SELECT id FROM "Devices" WHERE "deviceType" = :deviceType AND "locationId" = :locationId LIMIT 1`,
+      `SELECT id FROM "Devices" 
+       WHERE "deviceName" = :deviceName AND "locationId" = :locationId
+       LIMIT 1`,
       {
-        replacements: { deviceType, locationId },
+        replacements: { deviceName, locationId },
         type: sequelize.QueryTypes.SELECT,
       }
     );
@@ -34,23 +37,29 @@ exports.isDeviceExists = async (deviceType, locationId) => {
   }
 };
 
-// Create a new device
+//  Create a new device
 exports.create = async (data) => {
   try {
     const {
-      deviceType,
-      price,
+      deviceName,
+      resolutionHeight,
+      resolutionWidth,
+      orientation,
       locationId,
     } = data ?? {};
 
     const [result] = await sequelize.query(
-      `INSERT INTO "Devices" ("deviceType", "price", "locationId", "createdAt", "updatedAt")
-       VALUES (:deviceType, :price, :locationId, NOW(), NOW())
+      `INSERT INTO "Devices" 
+        ("deviceName", "resolutionHeight", "resolutionWidth", "orientation", "locationId", "createdAt", "updatedAt")
+       VALUES 
+        (:deviceName, :resolutionHeight, :resolutionWidth, :orientation, :locationId, NOW(), NOW())
        RETURNING *`,
       {
         replacements: {
-          deviceType,
-          price,
+          deviceName,
+          resolutionHeight,
+          resolutionWidth,
+          orientation,
           locationId,
         },
         type: sequelize.QueryTypes.INSERT,
