@@ -37,6 +37,42 @@ exports.isDeviceExists = async (deviceName, locationId) => {
   }
 };
 
+// //  Create a new device
+// exports.create = async (data) => {
+//   try {
+//     const {
+//       deviceName,
+//       resolutionHeight,
+//       resolutionWidth,
+//       orientation,
+//       locationId,
+//     } = data ?? {};
+
+//     const [result] = await sequelize.query(
+//       `INSERT INTO "Devices" 
+//         ("deviceName", "resolutionHeight", "resolutionWidth", "orientation", "locationId", "createdAt", "updatedAt")
+//        VALUES 
+//         (:deviceName, :resolutionHeight, :resolutionWidth, :orientation, :locationId, NOW(), NOW())
+//        RETURNING *`,
+//       {
+//         replacements: {
+//           deviceName,
+//           resolutionHeight,
+//           resolutionWidth,
+//           orientation,
+//           locationId,
+//         },
+//         type: sequelize.QueryTypes.INSERT,
+//       }
+//     );
+
+//     return result?.[0] ?? null;
+//   } catch (error) {
+//     console.error(`Error in create: ${error?.message}`);
+//     throw error;
+//   }
+// };
+
 //  Create a new device
 exports.create = async (data) => {
   try {
@@ -46,13 +82,14 @@ exports.create = async (data) => {
       resolutionWidth,
       orientation,
       locationId,
+      price, 
     } = data ?? {};
 
     const [result] = await sequelize.query(
       `INSERT INTO "Devices" 
-        ("deviceName", "resolutionHeight", "resolutionWidth", "orientation", "locationId", "createdAt", "updatedAt")
+        ("deviceName", "resolutionHeight", "resolutionWidth", "orientation", "locationId", "price", "createdAt", "updatedAt")
        VALUES 
-        (:deviceName, :resolutionHeight, :resolutionWidth, :orientation, :locationId, NOW(), NOW())
+        (:deviceName, :resolutionHeight, :resolutionWidth, :orientation, :locationId, :price, NOW(), NOW())
        RETURNING *`,
       {
         replacements: {
@@ -61,6 +98,7 @@ exports.create = async (data) => {
           resolutionWidth,
           orientation,
           locationId,
+          price, 
         },
         type: sequelize.QueryTypes.INSERT,
       }
@@ -72,3 +110,4 @@ exports.create = async (data) => {
     throw error;
   }
 };
+
