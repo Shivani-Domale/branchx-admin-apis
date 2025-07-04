@@ -37,41 +37,7 @@ exports.isDeviceExists = async (deviceName, locationId) => {
   }
 };
 
-// //  Create a new device
-// exports.create = async (data) => {
-//   try {
-//     const {
-//       deviceName,
-//       resolutionHeight,
-//       resolutionWidth,
-//       orientation,
-//       locationId,
-//     } = data ?? {};
 
-//     const [result] = await sequelize.query(
-//       `INSERT INTO "Devices" 
-//         ("deviceName", "resolutionHeight", "resolutionWidth", "orientation", "locationId", "createdAt", "updatedAt")
-//        VALUES 
-//         (:deviceName, :resolutionHeight, :resolutionWidth, :orientation, :locationId, NOW(), NOW())
-//        RETURNING *`,
-//       {
-//         replacements: {
-//           deviceName,
-//           resolutionHeight,
-//           resolutionWidth,
-//           orientation,
-//           locationId,
-//         },
-//         type: sequelize.QueryTypes.INSERT,
-//       }
-//     );
-
-//     return result?.[0] ?? null;
-//   } catch (error) {
-//     console.error(`Error in create: ${error?.message}`);
-//     throw error;
-//   }
-// };
 
 //  Create a new device
 exports.create = async (data) => {
@@ -82,7 +48,7 @@ exports.create = async (data) => {
       resolutionWidth,
       orientation,
       locationId,
-      price, 
+      price,
     } = data ?? {};
 
     const [result] = await sequelize.query(
@@ -98,7 +64,7 @@ exports.create = async (data) => {
           resolutionWidth,
           orientation,
           locationId,
-          price, 
+          price,
         },
         type: sequelize.QueryTypes.INSERT,
       }
@@ -111,3 +77,17 @@ exports.create = async (data) => {
   }
 };
 
+exports.findAll = async () => {
+  try {
+    const [results] = await sequelize.query(`
+      SELECT d.*, l.city AS locationCity
+      FROM "Devices" d
+      LEFT JOIN "Locations" l ON d."locationId" = l."id"
+      ORDER BY d."createdAt" DESC
+    `);
+    return results;
+  } catch (error) {
+    console.error(`Error in findAll: ${error?.message}`);
+    throw error;
+  }
+};

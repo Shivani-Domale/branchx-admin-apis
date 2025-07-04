@@ -15,3 +15,19 @@ exports.createDevice = async (req, res) => {
     });
   }
 };
+
+exports.viewAllDevices = async (req, res) => {
+  try {
+    const devices = await deviceService.getAllDevices();
+    return res.status(200).json({
+      message: 'Devices fetched successfully',
+      data: devices,
+    });
+  } catch (error) {
+    console.error('View All Devices Error:', error);
+    return res.status(error?.statusCode || 500).json({
+      message: error?.message || 'Internal server error',
+      error,
+    });
+  }
+};

@@ -4,6 +4,7 @@ const router = express.Router();
 const deviceController = require('../../controllers/device-controller');
 
 router.post('/admin/devices', validateCreateDevice, deviceController.createDevice);
+router.get('/admin/getDevices', deviceController.viewAllDevices);
 
 module.exports = router;
 
