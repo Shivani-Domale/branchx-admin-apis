@@ -68,7 +68,7 @@ const getAllCampaigns = async () => {
 
       // Fetch aDevices (Devices)
       const devices = await sequelize.query(`
-        SELECT d."deviceType"
+        SELECT d."deviceName"
         FROM "Devices" d
         INNER JOIN "CampaignDeviceTypes" cdt ON cdt."deviceTypeId" = d.id
         WHERE cdt."campaignId" = :campaignId
