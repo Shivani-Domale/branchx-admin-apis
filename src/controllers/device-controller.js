@@ -31,3 +31,21 @@ exports.viewAllDevices = async (req, res) => {
     });
   }
 };
+
+exports.toggleDeviceStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await deviceService.toggleDeviceStatus(id);
+
+    res.status(200).json({
+      message: `Device status updated from ${result.oldStatus} to ${result.newStatus}`,
+      deviceId: result.id,
+    });
+  } catch (error) {
+    console.error('Error in toggleDeviceStatus controller:', error);
+    res.status(500).json({
+      message: error.message || 'Failed to toggle device status',
+    });
+  }
+};

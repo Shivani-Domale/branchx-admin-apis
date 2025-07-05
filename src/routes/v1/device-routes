@@ -5,6 +5,7 @@ const deviceController = require('../../controllers/device-controller');
 
 router.post('/admin/devices', validateCreateDevice, deviceController.createDevice);
 router.get('/admin/getDevices', deviceController.viewAllDevices);
+router.patch('/:id/status', deviceController.toggleDeviceStatus);
 
 module.exports = router;
 

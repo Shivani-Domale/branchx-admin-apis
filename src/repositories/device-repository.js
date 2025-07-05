@@ -91,3 +91,33 @@ exports.findAll = async () => {
     throw error;
   }
 };
+
+exports.findById = async (id) => {
+  try {
+    const [device] = await sequelize.query(
+      'SELECT * FROM "Devices" WHERE id = :id LIMIT 1',
+      {
+        replacements: { id },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
+    return device;
+  } catch (error) {
+    console.error('Error in findById:', error);
+    throw new Error('Database error while fetching device');
+  }
+};
+
+exports.updateStatus = async (id, newStatus) => {
+  try {
+    await sequelize.query(
+      'UPDATE "Devices" SET status = :status WHERE id = :id',
+      {
+        replacements: { status: newStatus, id },
+      }
+    );
+  } catch (error) {
+    console.error('Error in updateStatus:', error);
+    throw new Error('Database error while updating status');
+  }
+};
