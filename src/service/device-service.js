@@ -90,3 +90,25 @@ exports.getAllDevices = async () => {
     throw error;
   }
 };
+
+exports.toggleDeviceStatus = async (id) => {
+  try {
+    const device = await deviceRepository.findById(id);
+
+    if (!device?.status) {
+      throw new Error('Device not found or status is missing');
+    }
+
+    const newStatus = device.status === 'enabled' ? 'disabled' : 'enabled';
+    await deviceRepository.updateStatus(id, newStatus);
+
+    return {
+      id,
+      oldStatus: device.status,
+      newStatus,
+    };
+  } catch (error) {
+    console.error('Error in toggleDeviceStatus:', error);
+    throw error;
+  }
+};
