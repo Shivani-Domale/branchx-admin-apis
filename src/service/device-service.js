@@ -58,8 +58,7 @@ exports.createDevice = async (data) => {
       throw error;
     }
 
-    // Get default price
-    const price = defaultPrices[formattedDeviceName];
+    // Get default pri
 
     // Create device
     const newDevice = await deviceRepository.create({
@@ -68,7 +67,7 @@ exports.createDevice = async (data) => {
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
       locationId: 1,
-      price, // Add the price here
+      price:data.price, // Add the price here
     });
 
     return newDevice;
