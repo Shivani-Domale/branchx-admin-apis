@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const deviceController = require('../../controllers/device-controller');
 
-router.post('/admin/devices', validateCreateDevice, deviceController.createDevice);
+router.post('/admin/devices', deviceController.createDevice);
 router.get('/admin/getDevices', deviceController.viewAllDevices);
 router.patch('/:id/status', deviceController.toggleDeviceStatus);
 router.get('/getAllLocations',deviceController.getAllLocations)
