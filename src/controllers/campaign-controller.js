@@ -54,7 +54,7 @@ const getCampaignDetailsById = async (req, res) => {
 
   const { campaignId } = req.params;
   try{
-     const campaign  = await CampaignService.getCampaignByid(campaignId);
+     const campaign  = await CampaignService.getCampaignById(campaignId);
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' }); 
     }

@@ -77,8 +77,8 @@ const getAllCampaigns = async () => {
         type: sequelize.QueryTypes.SELECT
       });
 
-      campaign.targetRegions = locations;
-      campaign.aDevices = devices;
+      campaign.regions = locations;
+      campaign.targetDevices = devices;
     }
 
 
@@ -88,21 +88,51 @@ const getAllCampaigns = async () => {
   }
 };
 
-const getCampaignByid = async (campaignId) => {
+const getCampaignById = async (campaignId) => {
   try {
-    const [campaigns] = await sequelize.query(
-      `SELECT * FROM "Campaigns" WHERE id = :campaignId`, 
-      {
-        replacements: { campaignId },
-        type: sequelize.QueryTypes.SELECT
-      }
-    );
+    // Step 1: Fetch campaign by ID + join productType
+    const [campaign] = await sequelize.query(`
+      SELECT c.*, p.product_type AS "productType"
+      FROM "Campaigns" c
+      LEFT JOIN "Products" p ON c."productId" = p.id
+      WHERE c.id = :campaignId
+    `, {
+      replacements: { campaignId },
+      type: sequelize.QueryTypes.SELECT
+    });
 
-    if (!campaigns) {
+    if (!campaign) {
       throw new Error("Campaign not found");
     }
 
-    return campaigns;
+    // Step 2: Fetch associated regions (locations)
+    const locations = await sequelize.query(`
+      SELECT l.city
+      FROM "Locations" l
+      INNER JOIN "CampaignLocations" cl ON cl."locationId" = l.id
+      WHERE cl."campaignId" = :campaignId
+    `, {
+      replacements: { campaignId },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    // Step 3: Fetch associated devices
+    const devices = await sequelize.query(`
+      SELECT d."deviceName"
+      FROM "Devices" d
+      INNER JOIN "CampaignDeviceTypes" cdt ON cdt."deviceTypeId" = d.id
+      WHERE cdt."campaignId" = :campaignId
+    `, {
+      replacements: { campaignId },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    // Step 4: Add extra fields
+    campaign.regions = locations.map(loc => loc.city);
+    campaign.targetDevices = devices.map(dev => dev.deviceName);
+
+    return campaign;
+
   } catch (error) {
     throw new Error(`Failed to fetch campaign: ${error.message}`);
   }
@@ -110,8 +140,9 @@ const getCampaignByid = async (campaignId) => {
 
 
 
+
 module.exports = {
 
-  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignByid
+  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById
 
 };
