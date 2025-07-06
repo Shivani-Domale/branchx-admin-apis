@@ -23,7 +23,9 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
     }
 
     const finalStatus = status === "APPROVE" ? "APPROVED" : "REJECTED";
-    const remark = " ";
+    if(finalStatus==="APPROVED"){
+    remark = " ";
+    } 
     const [result] = await sequelize.query(`
       UPDATE "Campaigns"
       SET "isApproved" = :finalStatus,
