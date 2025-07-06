@@ -58,7 +58,7 @@ exports.loginAdmin = async ({ email, password }) => {
     const token = jwt.sign(
         { id: admin.id, email: admin.email, role: admin.role },
         ServerConfig.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '4d' }
     );
     return { role: admin.role, token };
     }
@@ -71,7 +71,7 @@ exports.loginAdmin = async ({ email, password }) => {
     const token = jwt.sign(
         { id: admin.id, email: admin.email, role: admin.role },
         ServerConfig.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '4d' }
     );
 
   return { role: admin.role, token };
