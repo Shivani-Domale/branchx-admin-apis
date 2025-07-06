@@ -90,7 +90,7 @@ const getAllCampaigns = async () => {
         files = [];
       }
 
-      // ✅ Only get first image (ignore video)
+      // Only get first image (ignore video)
       const imageFile = files.find(file =>
         typeof file === 'string' &&
         (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
@@ -98,7 +98,7 @@ const getAllCampaigns = async () => {
 
       campaign.image = imageFile || null;
 
-      // ❌ Remove productFiles from final response
+      //  Remove productFiles from final response
       delete campaign.productFiles;
     }
 
@@ -164,5 +164,4 @@ const getCampaignById = async (campaignId) => {
 module.exports = {
 
   getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById
-
 };

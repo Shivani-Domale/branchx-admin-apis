@@ -1,4 +1,5 @@
 
+const { sequelize } = require('../models');
 const deviceRepository = require('../repositories/device-repository');
 
 const validOrientations = ['Horizontal', 'Vertical'];
@@ -111,4 +112,15 @@ exports.toggleDeviceStatus = async (id) => {
     console.error('Error in toggleDeviceStatus:', error);
     throw error;
   }
+};
+
+ exports.getAllLocations = async () => {
+  const locations = await sequelize.query(`
+    SELECT DISTINCT city FROM "Locations"
+  `, {
+    type: sequelize.QueryTypes.SELECT,
+  });
+
+  // return raw array: ["Pune", "Mumbai", "Delhi"]
+  return locations.map(loc => loc.city);
 };

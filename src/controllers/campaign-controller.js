@@ -71,6 +71,10 @@ const getCampaignDetailsById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
 module.exports = {
     getCountPendingCampaigns,approveOrRejectCampaign,fetchCampaigns,getCampaignDetailsById
 };
