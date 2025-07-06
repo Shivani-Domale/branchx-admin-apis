@@ -67,7 +67,7 @@ exports.createDevice = async (data) => {
       resolutionHeight: parseInt(resolutionHeight),
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
-      locationId: location?.id,
+      locationId: 1,
       price, // Add the price here
     });
 
