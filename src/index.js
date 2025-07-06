@@ -36,9 +36,8 @@ app.use(cors({
 
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes)
-app.use(errorHandler);
 app.use('/api', deviceRoutes);
-
+app.use(errorHandler);
 
 
 app.listen(process.env.PORT, () => {

@@ -56,7 +56,7 @@ exports.loginAdmin = async ({ email, password }) => {
     
     const admin = await adminRepo.findByEmail(email);
     const token = jwt.sign(
-        { id: admin.id, email: admin.email, role: admin.role },
+        { id: admin.id, fullName:admin.fullName,email: admin.email, role: admin.role },
         ServerConfig.JWT_SECRET,
         { expiresIn: '4d' }
     );
