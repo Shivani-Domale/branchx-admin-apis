@@ -49,3 +49,19 @@ exports.toggleDeviceStatus = async (req, res) => {
     });
   }
 };
+
+
+ exports.getAllLocations = async (req, res) => {
+  try {
+    const locationNames = await deviceService.getAllLocations();
+
+    // Send raw array directly
+    return res.status(200).json(locationNames);
+  } catch (error) {
+    console.error("Error fetching locations:", error.message);
+    return res.status(500).json({
+      error: "Failed to fetch locations",
+      message: error.message,
+    });
+  }
+};
