@@ -7,6 +7,7 @@ module.exports = {
       queryInterface.addColumn("Admins", "phone", { type: Sequelize.STRING, allowNull: true }),
       queryInterface.addColumn("Admins", "country", { type: Sequelize.STRING, allowNull: true }),
       queryInterface.addColumn("Admins", "state", { type: Sequelize.STRING, allowNull: true }),
+      queryInterface.addColumn("Admins", "address", { type: Sequelize.STRING, allowNull: true }),,
       queryInterface.addColumn("Admins", "city", { type: Sequelize.STRING, allowNull: true }),
       queryInterface.addColumn("Admins", "businessName", { type: Sequelize.STRING, allowNull: true }),
       queryInterface.addColumn("Admins", "message", { type: Sequelize.TEXT, allowNull: true }),
