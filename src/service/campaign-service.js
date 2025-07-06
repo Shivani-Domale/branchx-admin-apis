@@ -39,11 +39,8 @@ const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
   }
 };
 
-
 const getAllCampaigns = async () => {
   try {
-
-    // Fetch all campaigns with productType from Product table
     const campaigns = await sequelize.query(`
       SELECT c.*, p.product_type AS "productType"
       FROM "Campaigns" c
@@ -53,11 +50,10 @@ const getAllCampaigns = async () => {
       type: sequelize.QueryTypes.SELECT
     });
 
-    //  Attach targetRegions and aDevices for each campaign
     for (const campaign of campaigns) {
-      // Fetch targetRegions (Locations)
+      // Fetch regions
       const locations = await sequelize.query(`
-        SELECT  l.city
+        SELECT l.city
         FROM "Locations" l
         INNER JOIN "CampaignLocations" cl ON cl."id" = l.id
         WHERE cl."campaignId" = :campaignId
@@ -66,7 +62,7 @@ const getAllCampaigns = async () => {
         type: sequelize.QueryTypes.SELECT
       });
 
-      // Fetch aDevices (Devices)
+      // Fetch devices
       const devices = await sequelize.query(`
         SELECT d."deviceName"
         FROM "Devices" d
@@ -79,8 +75,30 @@ const getAllCampaigns = async () => {
 
       campaign.regions = locations;
       campaign.targetDevices = devices;
-    }
 
+      // Parse productFiles and extract only first image
+      let files = [];
+      try {
+        if (typeof campaign.productFiles === 'string') {
+          files = JSON.parse(campaign.productFiles);
+        } else if (Array.isArray(campaign.productFiles)) {
+          files = campaign.productFiles;
+        }
+      } catch (err) {
+        files = [];
+      }
+
+      // ✅ Only get first image (ignore video)
+      const imageFile = files.find(file =>
+        typeof file === 'string' &&
+        (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
+      );
+
+      campaign.image = imageFile || null;
+
+      // ❌ Remove productFiles from final response
+      delete campaign.productFiles;
+    }
 
     return campaigns;
   } catch (error) {
