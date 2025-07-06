@@ -1,6 +1,8 @@
 const deviceService = require('../service/device-service');
 
 exports.createDevice = async (req, res) => {
+  console.log(req.body);
+  
   try {
     const device = await deviceService.createDevice(req?.body);
     return res.status(201).json({
