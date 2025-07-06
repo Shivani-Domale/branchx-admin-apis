@@ -16,6 +16,8 @@ const getPendingCampaignsCount = async () => {
 
 const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
   try {
+    console.log("---------------------------");
+    
     if (!["APPROVE", "REJECT"].includes(status)) {
       throw new Error("Status must be either APPROVE or REJECT");
     }
