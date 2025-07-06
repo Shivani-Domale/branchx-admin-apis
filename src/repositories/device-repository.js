@@ -80,10 +80,10 @@ exports.create = async (data) => {
 exports.findAll = async () => {
   try {
     const [results] = await sequelize.query(`
-      SELECT d.*, l.city AS locationCity
+      SELECT DISTINCT ON (d."deviceName") d.*, l.city AS "locationCity"
       FROM "Devices" d
       LEFT JOIN "Locations" l ON d."locationId" = l."id"
-      ORDER BY d."createdAt" DESC
+      ORDER BY d."deviceName", d."createdAt" DESC
     `);
     return results;
   } catch (error) {
