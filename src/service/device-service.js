@@ -114,13 +114,13 @@ exports.toggleDeviceStatus = async (id) => {
   }
 };
 
- exports.getAllLocations = async () => {
+exports.getAllLocations = async () => {
   const locations = await sequelize.query(`
     SELECT DISTINCT city FROM "Locations"
   `, {
     type: sequelize.QueryTypes.SELECT,
   });
 
-  // return raw array: ["Pune", "Mumbai", "Delhi"]
-  return locations.map(loc => loc.city);
+  // Format each location into { locationNames: "city name" }
+  return locations.map(loc => ({ locationNames: loc.city }));
 };
