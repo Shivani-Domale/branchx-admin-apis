@@ -24,11 +24,7 @@ exports.createDevice = async (data) => {
     const cleanDeviceName = deviceName?.trim();
     const formattedDeviceName = cleanDeviceName?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
 
-    if (!defaultPrices.hasOwnProperty(formattedDeviceName)) {
-      const error = new Error(`Invalid device name. Allowed values: ${Object.keys(defaultPrices).join(', ')}`);
-      error.statusCode = 400;
-      throw error;
-    }
+  data.price = 30;
 
     // Validate orientation
     const cleanOrientation = orientation?.trim();
