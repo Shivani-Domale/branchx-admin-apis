@@ -7,6 +7,8 @@ Shivani Domale
 
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
+  console.log(req.body);
+  
   try {
     const { name, email } = req.body;
 
