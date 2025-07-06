@@ -39,23 +39,23 @@ exports.createDevice = async (data) => {
     }
 
     // Format city
-    const formattedCity = locationName?.trim()?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
-    if (!formattedCity) {
-      const error = new Error('Location name is required');
-      error.statusCode = 400;
-      throw error;
-    }
+    // const formattedCity = locationName?.trim()?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
+    // if (!formattedCity) {
+    //   const error = new Error('Location name is required');
+    //   error.statusCode = 400;
+    //   throw error;
+    // }
 
     // Get location by city
-    const location = await deviceRepository.getLocationByCity(formattedCity);
-    if (!location) {
-      const error = new Error(`Location "${formattedCity}" not found`);
-      error.statusCode = 404;
-      throw error;
-    }
+    // const location = await deviceRepository.getLocationByCity(formattedCity);
+    // if (!location) {
+    //   const error = new Error(`Location "${formattedCity}" not found`);
+    //   error.statusCode = 404;
+    //   throw error;
+    // }
 
     // Check if device with same name and location already exists
-    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, location?.id);
+    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, 1);
     if (deviceExists) {
       const error = new Error(`${formattedDeviceName} already exists in ${formattedCity}`);
       error.statusCode = 400;
