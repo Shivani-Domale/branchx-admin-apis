@@ -18,7 +18,8 @@ const allowedOrigins = [
     'http://139.59.23.86:9090',
     'http://localhost:5173',
     'http://localhost:5174',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'http://139.59.23.86:9092',
 ];
 app.use(cors({
     origin: function (origin, callback) {
