@@ -16,16 +16,15 @@ const getPendingCampaignsCount = async () => {
 
 const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
   try {
-    console.log("---------------------------");
-    
+
     if (!["APPROVE", "REJECT"].includes(status)) {
       throw new Error("Status must be either APPROVE or REJECT");
     }
 
     const finalStatus = status === "APPROVE" ? "APPROVED" : "REJECTED";
-    if(finalStatus==="APPROVED"){
-    remark = " ";
-    } 
+    if (finalStatus === "APPROVED") {
+      remark = " ";
+    }
     const [result] = await sequelize.query(`
       UPDATE "Campaigns"
       SET "isApproved" = :finalStatus,
@@ -98,9 +97,16 @@ const getAllCampaigns = async () => {
         (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
       );
 
-      campaign.image = imageFile || null;
 
-      //  Remove productFiles from final response
+      const videoFile = files.find(file =>
+        typeof file === 'string' &&
+        (file.endsWith('.mp4') || file.endsWith('.mov') || file.endsWith('.avi'))
+      );
+
+      
+      campaign.image = imageFile || null;
+      campaign.video = videoFile || null;
+
       delete campaign.productFiles;
     }
 

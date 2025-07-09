@@ -23,11 +23,7 @@ const getCountPendingCampaigns = async (req, res) => {
 
 
 
-const approveOrRejectCampaign = async (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
-  
-  
+const approveOrRejectCampaign = async (req, res) => {  
   const { campaignId } = req.params;
   const { isApproved, remark } = req.body; // isApproved: "APPROVE" or "REJECT"
 
