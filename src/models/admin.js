@@ -5,11 +5,6 @@ const {
 
 module.exports = (sequelize, DataTypes) => {
   class Admin extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index.js` file will call this method automatically.
-     */
     static associate(models) {
       // define association here
     }
@@ -41,10 +36,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true
     },
-    fullName: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     phone: {
       type: DataTypes.STRING,
       allowNull: true
@@ -58,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     city: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    address: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -93,8 +88,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Admin',
     tableName: 'Admins',
-    timestamps: true,   // enables createdAt and updatedAt
-    paranoid: true      // enables soft delete using deletedAt
+    timestamps: true,   // adds createdAt and updatedAt
+    paranoid: true      // enables soft deletes with deletedAt
   });
 
   return Admin;

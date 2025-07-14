@@ -1,3 +1,4 @@
+const admin = require("../models/admin");
 const { AdminService } = require("../service");
 
 /*
@@ -84,7 +85,12 @@ exports.changePassword = async (req, res) => {
 // Get Admin by ID
 exports.getAdminById = async (req, res) => {
   try {
-    const admin = await AdminService.getAdminById(req.params.id);
+    const isAdminLogin = req?.user;
+    if(!isAdminLogin){
+      throw new Error("Please Login to Update Profile !");
+    }
+
+    const admin = await AdminService.getAdminById(isAdminLogin.id);
     res.status(200).json({ data: admin });
   } catch (err) {
     console.error('Get admin by ID error:', err.message);
@@ -105,8 +111,10 @@ exports.getAllAdmins = async (req, res) => {
 
 // Update Admin Details
 exports.updateAdminDetails = async (req, res) => {
+  console.log(req.user);
   try {
-    const result = await AdminService.updateAdminDetails(req.params.id, req.body);
+    const result = await AdminService.updateAdminDetails(req?.user?.id, req.body);
+    console.log(req?.body);
     res.status(200).json(result);
   } catch (err) {
     console.error('Update admin details error:', err.message);

@@ -4,7 +4,6 @@ const { CampaignService } = require("../service");
 
 const getCountPendingCampaigns = async (req, res) => {
     const campaigs = await CampaignService.getPendingCampaignsCount();
-    console.log('Pending campaigns count:', campaigs);
     
     if (campaigs === null || campaigs === undefined) {
         return res.status(404).json({
@@ -23,11 +22,7 @@ const getCountPendingCampaigns = async (req, res) => {
 
 
 
-const approveOrRejectCampaign = async (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
-  
-  
+const approveOrRejectCampaign = async (req, res) => {  
   const { campaignId } = req.params;
   const { isApproved, remark } = req.body; // isApproved: "APPROVE" or "REJECT"
 

@@ -1,4 +1,3 @@
-
 const { sequelize } = require("../models");
 
 const CampaignRepository = require("../repositories/campaign-repository");
@@ -16,16 +15,15 @@ const getPendingCampaignsCount = async () => {
 
 const updateCampaignApprovalStatus = async (campaignId, status, remark) => {
   try {
-    console.log("---------------------------");
-    
+
     if (!["APPROVE", "REJECT"].includes(status)) {
       throw new Error("Status must be either APPROVE or REJECT");
     }
 
     const finalStatus = status === "APPROVE" ? "APPROVED" : "REJECTED";
-    if(finalStatus==="APPROVED"){
-    remark = " ";
-    } 
+    if (finalStatus === "APPROVED") {
+      remark = " ";
+    }
     const [result] = await sequelize.query(`
       UPDATE "Campaigns"
       SET "isApproved" = :finalStatus,
@@ -80,7 +78,6 @@ const getAllCampaigns = async () => {
       campaign.regions = locations;
       campaign.targetDevices = devices;
 
-      // Parse productFiles and extract only first image
       let files = [];
       try {
         if (typeof campaign.productFiles === 'string') {
@@ -92,16 +89,25 @@ const getAllCampaigns = async () => {
         files = [];
       }
 
-      // Only get first image (ignore video)
-      const imageFile = files.find(file =>
+      // Filter all image files
+      const imageFiles = files.filter(file =>
         typeof file === 'string' &&
         (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
       );
 
-      campaign.image = imageFile || null;
+      // Filter all video files
+      const videoFiles = files.filter(file =>
+        typeof file === 'string' &&
+        (file.endsWith('.mp4') || file.endsWith('.mov') || file.endsWith('.avi') || file.endsWith('.mkv'))
+      );
 
-      //  Remove productFiles from final response
-      delete campaign.productFiles;
+      // Assign arrays to productFiles field
+      campaign.productFiles = {
+        images: imageFiles.length > 0 ? imageFiles : [],
+        videos: videoFiles.length > 0 ? videoFiles : []
+      };
+
+
     }
 
     return campaigns;
@@ -164,6 +170,5 @@ const getCampaignById = async (campaignId) => {
 
 
 module.exports = {
-
   getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById
 };
