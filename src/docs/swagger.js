@@ -10,7 +10,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3001/api/v1', 
+        url: 'https://branchx-admin-apis.onrender.com/api/v1', 
       },
     ],
   },
