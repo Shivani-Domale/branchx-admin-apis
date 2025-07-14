@@ -9,6 +9,8 @@ const errorHandler = require('./middlewares/error-Handler');
 const logger = require('./config/logger');
 const deviceRoutes = require('./routes/v1/device-routes');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const { Swagger } = require('./docs');
 const app = express();
 
 app.use(express.json());
@@ -20,6 +22,7 @@ const allowedOrigins = [
     'http://localhost:5174',
     'http://127.0.0.1:3000',
     'http://139.59.23.86:9092',
+    'http://localhost:3001',
 ];
 app.use(cors({
     origin: function (origin, callback) {
@@ -38,6 +41,7 @@ app.use(cors({
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes)
 app.use('/api', deviceRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(Swagger));
 app.use(errorHandler);
 
 
