@@ -27,9 +27,9 @@ router.post('/change-password', verifyToken, isAdmin, adminController.changePass
 router.get('/get-all-admins', verifyToken, isOrgAdmin, adminController.getAllAdmins);
 
 // Get admin by ID (placed below '/')
-router.get('/admin/:id', verifyToken, isAdmin, adminController.getAdminById);
+router.get('/getEditProfile', verifyToken, isAdmin, adminController.getAdminById);
 
 // Update admin details
-router.put('/admin/:id', verifyToken, isAdmin, adminController.updateAdminDetails);
+router.put('/updateProfile', verifyToken, isAdmin, adminController.updateAdminDetails);
 
 module.exports = router;

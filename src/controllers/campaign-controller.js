@@ -4,7 +4,6 @@ const { CampaignService } = require("../service");
 
 const getCountPendingCampaigns = async (req, res) => {
     const campaigs = await CampaignService.getPendingCampaignsCount();
-    console.log('Pending campaigns count:', campaigs);
     
     if (campaigs === null || campaigs === undefined) {
         return res.status(404).json({

@@ -1,4 +1,3 @@
-
 const { sequelize } = require("../models");
 
 const CampaignRepository = require("../repositories/campaign-repository");
@@ -79,7 +78,6 @@ const getAllCampaigns = async () => {
       campaign.regions = locations;
       campaign.targetDevices = devices;
 
-      // Parse productFiles and extract only first image
       let files = [];
       try {
         if (typeof campaign.productFiles === 'string') {
@@ -91,23 +89,25 @@ const getAllCampaigns = async () => {
         files = [];
       }
 
-      // Only get first image (ignore video)
-      const imageFile = files.find(file =>
+      // Filter all image files
+      const imageFiles = files.filter(file =>
         typeof file === 'string' &&
         (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
       );
 
-
-      const videoFile = files.find(file =>
+      // Filter all video files
+      const videoFiles = files.filter(file =>
         typeof file === 'string' &&
-        (file.endsWith('.mp4') || file.endsWith('.mov') || file.endsWith('.avi'))
+        (file.endsWith('.mp4') || file.endsWith('.mov') || file.endsWith('.avi') || file.endsWith('.mkv'))
       );
 
-      
-      campaign.image = imageFile || null;
-      campaign.video = videoFile || null;
+      // Assign arrays to productFiles field
+      campaign.productFiles = {
+        images: imageFiles.length > 0 ? imageFiles : [],
+        videos: videoFiles.length > 0 ? videoFiles : []
+      };
 
-      delete campaign.productFiles;
+
     }
 
     return campaigns;
@@ -170,6 +170,5 @@ const getCampaignById = async (campaignId) => {
 
 
 module.exports = {
-
   getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById
 };

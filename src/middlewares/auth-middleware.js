@@ -25,7 +25,7 @@ const isOrgAdmin = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  console.log("Decoded user in isAdmin:", req.user);
+
   if (!req.user || !['ADMIN', 'ORG_ADMIN'].includes(req.user.role)) {
     return res.status(403).json({ message: 'Access denied. Not an admin.' });
   }
