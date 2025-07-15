@@ -2,12 +2,49 @@ const userRepository = require('../repositories/user-repository');
 const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const sendEmail = require('../utils/sendEmail');
 const bcrypt = require('bcryptjs');
+const {sequelize} = require('../models')
+
 
 exports.createUser = async (data) => {
   try {
-    const user = await userRepository.create(data);
+    const {
+      fullName,
+      email,
+      phone,
+      country = null,
+      state = null,
+      city = null,
+      role,
+      businessName = null,
+      message = null
+    } = data;
+
+    const [result] = await sequelize.query(
+      `INSERT INTO "Users" 
+        ("fullName", "email", "phone", "country", "state", "city", "role", "businessName", "message", "status", "createdAt", "updatedAt")
+       VALUES 
+        (:fullName, :email, :phone, :country, :state, :city, :role, :businessName, :message, 'PENDING', NOW(), NOW())
+       RETURNING *`,
+      {
+        replacements: {
+          fullName,
+          email,
+          phone,
+          country,
+          state,
+          city,
+          role,
+          businessName,
+          message
+        },
+        type: sequelize.QueryTypes.INSERT
+      }
+    );
+
+    const user = result[0]; // raw INSERT returns array of inserted rows
     await sendEmail(user);
     return user;
+
   } catch (error) {
     console.error(`Error in createUser: ${error?.message}`);
     throw new Error(`Error creating user: ${error?.message}`);

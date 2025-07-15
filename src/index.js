@@ -41,6 +41,8 @@ app.use(cors({
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes)
 app.use('/api', deviceRoutes);
+app.use('/users', userRoutes);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(Swagger));
 app.use(errorHandler);
 
