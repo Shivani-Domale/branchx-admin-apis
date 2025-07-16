@@ -9,7 +9,7 @@ Shivani Domale
 //Admin Registration - POST /admin/register
 exports.registerAdmin = async (req, res) => {
   console.log(req.body);
-  
+
   try {
     const { name, email } = req.body;
 
@@ -86,7 +86,7 @@ exports.changePassword = async (req, res) => {
 exports.getAdminById = async (req, res) => {
   try {
     const isAdminLogin = req?.user;
-    if(!isAdminLogin){
+    if (!isAdminLogin) {
       throw new Error("Please Login to Update Profile !");
     }
 
