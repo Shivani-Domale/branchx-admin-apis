@@ -1,22 +1,43 @@
 const logger = require('../config/logger');
 const sendEmail = require('../utils/sendEmail');
 const { UserService } = require('../service');
+const { StatusCodes } = require('http-status-codes');
+const userService = require('../service/user-service');
+const successResponse = require('../utils/errorHandler/successResponse');
+const errorResponse = require('../utils/errorHandler/errorResponse');
+const { User } = require('../models');  
+
 
 exports.createUser = async (req, res, next) => {
   try {
-    const user = await UserService.createUser(req?.body);
-    logger.info(`User created: ${user?.id} - ${user?.email}`);
+    const email = req?.body?.email;
 
-    // Send notification email on new contact form submission
+    if (!email) {
+      errorResponse(res, StatusCodes.BAD_REQUEST, "Email is required", null);
+      return;
+    }
+
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+      errorResponse(res, StatusCodes.NOT_ACCEPTABLE, "Email Already Exists !!", null);
+      return;
+    }
+
+    const user = await userService.createUser(req?.body);
+    logger?.info?.(`User created: ${user?.id} - ${user?.email}`);
+
+    // Send notification email
     await sendEmail(user);
-    logger.info(`Notification email sent for user: ${user?.id}`);
+    logger?.info?.(`Notification email sent for user: ${user?.id}`);
 
-    res.status(201).json({ message: 'User created successfully', user });
+    successResponse(res, "User Created SuccessFully !", StatusCodes.CREATED, null);
   } catch (error) {
-    logger.error(`Error in createUser: ${error?.message}`);
+    logger?.error?.(`Error in createUser: ${error?.message}`);
     next(error);
   }
 };
+
 
 exports.getAllUsers = async (req, res, next) => {
   try {

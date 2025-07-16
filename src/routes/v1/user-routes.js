@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 // const validateUser = require('../../middlewares/validate-User');
 const { UserController } = require('../../controllers');
+ 
+
+
 
 // Route to create user (kept commented as per request)
 // router.post('/', validateUser, UserController.createUser);
@@ -53,5 +56,42 @@ router.get('/', UserController.getAllUsers);
  *         description: User status updated
  */
 router.put('/:userId/status', UserController.updateUserStatus);
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: User-related APIs
+ */
+
+/**
+ * @swagger
+ * /users/createUser:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created
+ */
+router.post('/addUser', UserController.createUser);
 
 module.exports = router;
