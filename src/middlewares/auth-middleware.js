@@ -1,22 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { ServerConfig } = require('../config');
 
-// const verifyToken = (req, res, next) => {
-//   try {
-//     const authHeader = req.headers['authorization'];
-//     if (!authHeader) {
-//       return res.status(403).json({ message: 'No token provided' });
-//     }
-
-//     const token = authHeader.split(' ')[1];
-//     const decoded = jwt.verify(token, ServerConfig.JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     return res.status(401).json({ message: 'Unauthorized or token invalid' });
-//   }
-// };
-
 const isOrgAdmin = (req, res, next) => {
   if (req.user.role !== 'ORG_ADMIN') {
     return res.status(403).json({ message: 'Only Org Admins are allowed' });
@@ -34,7 +18,6 @@ const isAdmin = (req, res, next) => {
 
 
 module.exports = {
-  //verifyToken,
   isOrgAdmin,
   isAdmin
 };

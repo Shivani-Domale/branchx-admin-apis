@@ -47,32 +47,32 @@ exports.registerAdmin = async ({ name, email }) => {
 
 //// Login admin
 exports.loginAdmin = async ({ email, password }) => {
-    // Validate input
-    if (!email || !password) {
+  // Validate input
+  if (!email || !password) {
     throw new Error('Email and password are required');
-    }
-    // Check if the email and password match the organization admin credentials
-    if (email === ServerConfig.ORG_ADMIN_EMAIL && password === ServerConfig.ORG_ADMIN_PASSWORD) {
-    
+  }
+  // Check if the email and password match the organization admin credentials
+  if (email === ServerConfig.ORG_ADMIN_EMAIL && password === ServerConfig.ORG_ADMIN_PASSWORD) {
+
     const admin = await adminRepo.findByEmail(email);
     const token = jwt.sign(
-        { id: admin.id, fullName:admin.name,email: admin.email, role: admin.role },
-        ServerConfig.JWT_SECRET,
-        { expiresIn: '4d' }
+      { id: admin.id, fullName: admin.name, email: admin.email, role: admin.role },
+      ServerConfig.JWT_SECRET,
+      { expiresIn: '4d' }
     );
     return { role: admin.role, token };
-    }
-    // For other admins, check the database
-    const admin = await adminRepo.findByEmail(email);
-    if (!admin || !(await bcrypt.compare(password, admin.password))) {
-        throw new Error('Invalid email or password');
-    }
-    // Generate JWT token for the admin
-    const token = jwt.sign(
-        { id: admin.id, fullName:admin.name,email: admin.email, role: admin.role },
-        ServerConfig.JWT_SECRET,
-        { expiresIn: '4d' }
-    );
+  }
+  // For other admins, check the database
+  const admin = await adminRepo.findByEmail(email);
+  if (!admin || !(await bcrypt.compare(password, admin.password))) {
+    throw new Error('Invalid email or password');
+  }
+  // Generate JWT token for the admin
+  const token = jwt.sign(
+    { id: admin.id, fullName: admin.name, email: admin.email, role: admin.role },
+    ServerConfig.JWT_SECRET,
+    { expiresIn: '4d' }
+  );
 
   return { role: admin.role, token };
 };
@@ -82,7 +82,7 @@ exports.forgotPassword = async (email) => {
   // Validate input
   if (!email || typeof email !== 'string') {
     throw new Error('Invalid email format');
-  }  
+  }
   // Check if the email is registered
   if (!email) throw new Error('Email is required');
   const admin = await adminRepo.findByEmail(email);
@@ -106,10 +106,10 @@ exports.forgotPassword = async (email) => {
 
 //// Verify the reset code
 exports.verifyResetCode = async ({ email, resetToken }) => {
-   // Validate input
+  // Validate input
   if (!email || !resetToken) {
     throw new Error('Email and reset token are required');
-  }  
+  }
   // Check if the admin exists and has a valid reset token
   const admin = await adminRepo.findByEmail(email);
   if (!admin || !admin.resetToken || !admin.resetTokenExpire) {
@@ -125,7 +125,7 @@ exports.resetPassword = async ({ email, resetToken, newPassword }) => {
   // Validate input
   if (!email || !resetToken || !newPassword) {
     throw new Error('Email, reset token, and new password are required');
-  }  
+  }
   // Fetch the admin by email
   const admin = await adminRepo.findByEmail(email);
   // Admin not found

@@ -2,7 +2,7 @@ const deviceService = require('../service/device-service');
 
 exports.createDevice = async (req, res) => {
   console.log(req.body);
-  
+
   try {
     const device = await deviceService.createDevice(req?.body);
     return res.status(201).json({
@@ -53,7 +53,7 @@ exports.toggleDeviceStatus = async (req, res) => {
 };
 
 
- exports.getAllLocations = async (req, res) => {
+exports.getAllLocations = async (req, res) => {
   try {
     const locationNames = await deviceService.getAllLocations();
 

@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes');
 const userService = require('../service/user-service');
 const successResponse = require('../utils/errorHandler/successResponse');
 const errorResponse = require('../utils/errorHandler/errorResponse');
-const { User } = require('../models');  
+const { User } = require('../models');
 
 
 exports.createUser = async (req, res, next) => {
