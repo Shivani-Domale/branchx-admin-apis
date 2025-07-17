@@ -6,7 +6,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Admin extends Model {
     static associate(models) {
-      // define association here
+
     }
   }
 
@@ -24,17 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    profile_url: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     role: {
       type: DataTypes.STRING,
-      allowNull: true
-    },
-    resetToken: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    resetTokenExpire: {
-      type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false,
+      defaultValue: 'ADMIN'
     },
     phone: {
       type: DataTypes.STRING,
@@ -56,32 +53,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    businessName: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    message: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    status: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     isDeleted: {
-      type: DataTypes.DATE,
-      allowNull: true
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
     deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
-    },
-    createdBy: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    updatedBy: {
-      type: DataTypes.STRING,
       allowNull: true
     }
   }, {

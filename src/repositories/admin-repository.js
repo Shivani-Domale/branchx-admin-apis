@@ -23,4 +23,4 @@ class AdminRepository extends CrudRepository {
   }
 }
 
-module.exports = new AdminRepository();
+module.exports =  AdminRepository;

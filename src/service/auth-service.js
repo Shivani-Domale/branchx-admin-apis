@@ -2,9 +2,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { ServerConfig } = require('../config');
-const adminRepo = require('../repositories/admin-repository');
+
 const sendResetCodeEmail = require('../utils/sendResetCodeEmail');
 const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
+const { AdminRepository } = require('../repositories');
+
+
+const adminRespository  = new AdminRepository();
 
 // Generate a secure random password
 const generateRandomPassword = () => {
@@ -23,7 +27,7 @@ exports.registerAdmin = async ({ name, email }) => {
     throw new Error('Name and email are required');
   }
 
-  const existingAdmin = await adminRepo.findByEmail(email);
+  const existingAdmin = await adminRespository.findByEmail(email);
   if (existingAdmin) {
     throw new Error('Email already registered');
   }
@@ -32,7 +36,7 @@ exports.registerAdmin = async ({ name, email }) => {
   const plainPassword = generateRandomPassword();
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-  const newAdmin = await adminRepo.createAdmin({
+  const newAdmin = await adminRespository.createAdmin({
     name,
     email,
     password: hashedPassword,
@@ -54,7 +58,7 @@ exports.loginAdmin = async ({ email, password }) => {
   // Check if the email and password match the organization admin credentials
   if (email === ServerConfig.ORG_ADMIN_EMAIL && password === ServerConfig.ORG_ADMIN_PASSWORD) {
 
-    const admin = await adminRepo.findByEmail(email);
+    const admin = await adminRespository.findByEmail(email);
     const token = jwt.sign(
       { id: admin.id, fullName: admin.name, email: admin.email, role: admin.role },
       ServerConfig.JWT_SECRET,
@@ -63,7 +67,7 @@ exports.loginAdmin = async ({ email, password }) => {
     return { role: admin.role, token };
   }
   // For other admins, check the database
-  const admin = await adminRepo.findByEmail(email);
+  const admin = await adminRespository.findByEmail(email);
   if (!admin || !(await bcrypt.compare(password, admin.password))) {
     throw new Error('Invalid email or password');
   }
@@ -85,7 +89,7 @@ exports.forgotPassword = async (email) => {
   }
   // Check if the email is registered
   if (!email) throw new Error('Email is required');
-  const admin = await adminRepo.findByEmail(email);
+  const admin = await adminRespository.findByEmail(email);
   if (!admin) {
     throw new Error('Admin not found');
     //return { status: 404, message: 'Admin not found' };
@@ -96,7 +100,7 @@ exports.forgotPassword = async (email) => {
   // Update the admin record with the reset token and expiry
   admin.resetToken = resetToken;
   admin.resetTokenExpire = tokenExpiry;
-  await adminRepo.updateAdmin(admin, {
+  await adminRespository.updateAdmin(admin, {
     resetToken,
     resetTokenExpire: tokenExpiry,
   });
@@ -111,7 +115,7 @@ exports.verifyResetCode = async ({ email, resetToken }) => {
     throw new Error('Email and reset token are required');
   }
   // Check if the admin exists and has a valid reset token
-  const admin = await adminRepo.findByEmail(email);
+  const admin = await adminRespository.findByEmail(email);
   if (!admin || !admin.resetToken || !admin.resetTokenExpire) {
     throw new Error('Invalid or expired reset token.');
   }
@@ -127,7 +131,7 @@ exports.resetPassword = async ({ email, resetToken, newPassword }) => {
     throw new Error('Email, reset token, and new password are required');
   }
   // Fetch the admin by email
-  const admin = await adminRepo.findByEmail(email);
+  const admin = await adminRespository.findByEmail(email);
   // Admin not found
   if (!admin) {
     throw new Error('Admin not found');
@@ -156,7 +160,7 @@ exports.changePassword = async ({ email, oldPassword, newPassword }) => {
     throw new Error('Email, old password, and new password are required');
   }
   // Fetch the admin by email
-  const admin = await adminRepo.findByEmail(email);
+  const admin = await adminRespository.findByEmail(email);
   if (!admin) {
     throw new Error('Admin not found');
   }
@@ -176,7 +180,7 @@ exports.getAdminById = async (adminId) => {
     throw new Error('Admin ID is required');
   }
 
-  const admin = await adminRepo.findById(adminId);
+  const admin = await adminRespository.findById(adminId);
   if (!admin) {
     throw new Error('Admin not found');
   }
@@ -186,7 +190,7 @@ exports.getAdminById = async (adminId) => {
 
 //// Get All Admins
 exports.getAllAdmins = async () => {
-  const admins = await adminRepo.findAll();
+  const admins = await adminRespository.findAll();
   return admins;
 };
 
@@ -196,7 +200,7 @@ exports.updateAdminDetails = async (adminId, updateData) => {
     throw new Error('Admin ID and update data are required');
   }
 
-  const admin = await adminRepo.findById(adminId);
+  const admin = await adminRespository.findById(adminId);
   if (!admin) {
     throw new Error('Admin not found');
   }
@@ -206,6 +210,6 @@ exports.updateAdminDetails = async (adminId, updateData) => {
     throw new Error("Cannot update Org Admin details");
   }
 
-  await adminRepo.updateAdmin(admin, updateData);
+  await adminRespository.updateAdmin(admin, updateData);
   return { message: 'Admin details updated successfully' };
 };
