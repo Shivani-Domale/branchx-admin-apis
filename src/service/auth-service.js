@@ -8,7 +8,7 @@ const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const { AdminRepository } = require('../repositories');
 
 
-const adminRespository  = new AdminRepository();
+const adminRespository = new AdminRepository();
 
 // Generate a secure random password
 const generateRandomPassword = () => {

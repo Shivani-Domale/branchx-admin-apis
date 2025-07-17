@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "neondb_owner",
-    "password": "npg_XMKY7Sgnkd0P",
-    "database": "branchx",
-    "host": "ep-flat-boat-abu0yaw0-pooler.eu-west-2.aws.neon.tech",
+    "username": "branchxdb_owner",
+    "password": "npg_jTXwO8a3AufG",
+    "database": "branchxdb",
+    "host": "ep-white-breeze-abravfmm-pooler.eu-west-2.aws.neon.tech",
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {
@@ -20,10 +20,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "neondb_owner",
-    "password": "npg_XMKY7Sgnkd0P",
-    "database": "branchx",
-    "host": "ep-flat-boat-abu0yaw0-pooler.eu-west-2.aws.neon.tech",
+    "username": "branchxdb_owner",
+    "password": "npg_jTXwO8a3AufG",
+    "database": "branchxdb",
+    "host": "ep-white-breeze-abravfmm-pooler.eu-west-2.aws.neon.tech",
     "dialect": "postgres",
      "dialectOptions": {
       "ssl": {
@@ -31,5 +31,6 @@
         "rejectUnauthorized": false
       }
     }
+
   }
 }

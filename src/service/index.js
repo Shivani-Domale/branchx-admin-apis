@@ -1,5 +1,6 @@
 module.exports = {
     CampaignService: require('./campaign-service'),
-    AdminService: require('./auth-service'),
+    AuthService: require('./auth-service'),
     UserService: require('./user-service'),
+    AdminService:require('./admin/admin-service')
 }
