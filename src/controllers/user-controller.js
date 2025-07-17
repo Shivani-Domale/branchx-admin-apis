@@ -31,7 +31,7 @@ exports.createUser = async (req, res, next) => {
     await sendEmail(user);
     logger?.info?.(`Notification email sent for user: ${user?.id}`);
 
-    successResponse(res, "User Created SuccessFully !", StatusCodes.CREATED, null);
+    successResponse(res, "User Created SuccessFully !", StatusCodes.CREATED, user);
   } catch (error) {
     logger?.error?.(`Error in createUser: ${error?.message}`);
     next(error);
