@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { adminController } = require('../../controllers');
+const { AuthController } = require('../../controllers');
 const verifyToken = require('../../middlewares/verifyToken');
 const { isAdmin, isOrgAdmin } = require('../../middlewares/auth-middleware');
 
@@ -39,7 +39,7 @@ const { isAdmin, isOrgAdmin } = require('../../middlewares/auth-middleware');
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', adminController.loginAdmin);
+router.post('/login', AuthController.loginAdmin);
 
 /**
  * @swagger
@@ -79,7 +79,7 @@ router.post('/login', adminController.loginAdmin);
  *       403:
  *         description: Unauthorized
  */
-router.post('/register', verifyToken, isOrgAdmin, adminController.registerAdmin);
+router.post('/register', verifyToken, isOrgAdmin, AuthController.registerAdmin);
 
 // ----------------------------------------
 // COMMENTED ROUTES (for future activation)
@@ -91,20 +91,20 @@ router.post('/register', verifyToken, isOrgAdmin, adminController.registerAdmin)
 // });
 
 // // Password reset routes
-// router.post('/forgot-password', adminController.forgotPassword);
-// router.post('/verify-reset-code', adminController.verifyResetCode);
-// router.post('/reset-password', adminController.resetPassword);
+// router.post('/forgot-password', AuthController.forgotPassword);
+// router.post('/verify-reset-code', AuthController.verifyResetCode);
+// router.post('/reset-password', AuthController.resetPassword);
 
 // // Change password route
-// router.post('/change-password', verifyToken, isAdmin, adminController.changePassword);
+// router.post('/change-password', verifyToken, isAdmin, AuthController.changePassword);
 
 // // Get all admins
-// router.get('/get-all-admins', verifyToken, isOrgAdmin, adminController.getAllAdmins);
+// router.get('/get-all-admins', verifyToken, isOrgAdmin, AuthController.getAllAdmins);
 
 // // Get admin by ID
-// router.get('/getEditProfile', verifyToken, isAdmin, adminController.getAdminById);
+// router.get('/getEditProfile', verifyToken, isAdmin, AuthController.getAdminById);
 
 // // Update admin details
-// router.put('/updateProfile', verifyToken, isAdmin, adminController.updateAdminDetails);
+// router.put('/updateProfile', verifyToken, isAdmin, AuthController.updateAdminDetails);
 
 module.exports = router;

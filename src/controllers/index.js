@@ -1,5 +1,5 @@
 module.exports = {  
     CampaignController: require('./campaign-controller'),
-    adminController: require('./admin-controller'),
+    AuthController: require('./auth-controller'),
     UserController: require('./user-controller'),
 }
