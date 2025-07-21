@@ -1,17 +1,23 @@
-
 const { sequelize } = require('../models');
 const deviceRepository = require('../repositories/device-repository');
+const locationRepository = require('../repositories/location-repository');
 
 const validOrientations = ['Horizontal', 'Vertical'];
-const defaultPrices = {
+
+// Valid device types and their default prices
+const defaultPricesMap = {
   'Cube': 10,
   'Cube Pro': 20,
   'Billboard': 10,
   'Mobile': 20,
-  'pos': 10,
-  'tv': 10,
-  'ipad': 10,
+  'Pos': 10,
+  'Tv': 10,
+  'Ipad': 10,
 };
+
+// Convert to CamelCase
+const toCamelCase = (text) =>
+  text?.toLowerCase()?.replace(/\b\w/g, (char) => char.toUpperCase()) || '';
 
 exports.createDevice = async (data) => {
   try {
@@ -20,50 +26,54 @@ exports.createDevice = async (data) => {
       resolutionHeight,
       resolutionWidth,
       orientation,
-      locationName
+      locationName,
+      price, // optional custom price
     } = data;
 
-    // Normalize and validate device name
-    const cleanDeviceName = deviceName?.trim();
-    const formattedDeviceName = cleanDeviceName?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
+    //  Format and validate device name
+    const formattedDeviceName = toCamelCase(deviceName?.trim());
+    if (!defaultPricesMap[formattedDeviceName]) {
+      throw new Error(`Invalid device type. Allowed types: ${Object.keys(defaultPricesMap).join(', ')}`);
+    }
 
-  
-
-    // Validate orientation
+    //  Validate orientation
     const cleanOrientation = orientation?.trim();
     if (!validOrientations.includes(cleanOrientation)) {
-      const error = new Error(`Invalid orientation. Allowed values are: ${validOrientations.join(', ')}`);
-      error.statusCode = 400;
-      throw error;
+      throw new Error(`Invalid orientation. Allowed values: ${validOrientations.join(', ')}`);
     }
 
-    // Check if device with same name and location already exists
-    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, 1);
+    //  Get location ID from name
+    const location = await locationRepository.findLocationByName(locationName?.trim());
+    if (!location) {
+      throw new Error(`Location '${locationName}' not found.`);
+    }
+
+    //  Check if device already exists at location
+    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, location.id);
     if (deviceExists) {
-      const error = new Error(`${formattedDeviceName} already exists in ${formattedCity}`);
-      error.statusCode = 400;
-      throw error;
+      throw new Error(`${formattedDeviceName} already exists in ${locationName}`);
     }
 
-    const defaultPrices = defaultPrices[formattedDeviceName] || 10; // Default price if not found
+    //  Use custom price if provided, else use default
+    const finalPrice = price !== undefined ? parseFloat(price) : defaultPricesMap[formattedDeviceName];
 
-    // Create device
+    //  Create device
     const newDevice = await deviceRepository.create({
       deviceName: formattedDeviceName,
       resolutionHeight: parseInt(resolutionHeight),
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
-      locationId: 1,
-      price:defaultPrices // Add the price here
+      locationId: location.id,
+      price: finalPrice,
     });
 
     return newDevice;
+
   } catch (error) {
-    console.error(`Error in createDevice: ${error?.message}`);
+    console.error(`Error in createDevice: ${error.message}`);
     throw error;
   }
 };
-
 
 exports.getAllDevices = async () => {
   try {
