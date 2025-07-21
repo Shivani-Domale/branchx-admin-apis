@@ -4,10 +4,13 @@ const deviceRepository = require('../repositories/device-repository');
 
 const validOrientations = ['Horizontal', 'Vertical'];
 const defaultPrices = {
-  'Cube': 40,
-  'Cube Pro': 50,
-  'Billboard': 60,
-  'Mobile': 30,
+  'Cube': 10,
+  'Cube Pro': 20,
+  'Billboard': 10,
+  'Mobile': 20,
+  'pos': 10,
+  'tv': 10,
+  'ipad': 10,
 };
 
 exports.createDevice = async (data) => {
@@ -24,7 +27,7 @@ exports.createDevice = async (data) => {
     const cleanDeviceName = deviceName?.trim();
     const formattedDeviceName = cleanDeviceName?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
 
-  data.price = 30;
+  
 
     // Validate orientation
     const cleanOrientation = orientation?.trim();
@@ -34,22 +37,6 @@ exports.createDevice = async (data) => {
       throw error;
     }
 
-    // Format city
-    // const formattedCity = locationName?.trim()?.toLowerCase()?.replace(/\b\w/g, (c) => c.toUpperCase());
-    // if (!formattedCity) {
-    //   const error = new Error('Location name is required');
-    //   error.statusCode = 400;
-    //   throw error;
-    // }
-
-    // Get location by city
-    // const location = await deviceRepository.getLocationByCity(formattedCity);
-    // if (!location) {
-    //   const error = new Error(`Location "${formattedCity}" not found`);
-    //   error.statusCode = 404;
-    //   throw error;
-    // }
-
     // Check if device with same name and location already exists
     const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, 1);
     if (deviceExists) {
@@ -58,7 +45,7 @@ exports.createDevice = async (data) => {
       throw error;
     }
 
-    // Get default pri
+    const defaultPrices = defaultPrices[formattedDeviceName] || 10; // Default price if not found
 
     // Create device
     const newDevice = await deviceRepository.create({
@@ -67,7 +54,7 @@ exports.createDevice = async (data) => {
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
       locationId: 1,
-      price:data.price, // Add the price here
+      price:defaultPrices // Add the price here
     });
 
     return newDevice;

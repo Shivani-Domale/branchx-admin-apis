@@ -2,7 +2,7 @@ const userRepository = require('../repositories/user-repository');
 const sendCredentialsEmail = require('../utils/sendCredentialsEmail');
 const sendEmail = require('../utils/sendEmail');
 const bcrypt = require('bcryptjs');
-const {sequelize} = require('../models')
+const { sequelize } = require('../models')
 
 
 exports.createUser = async (data) => {
@@ -72,13 +72,15 @@ exports.updateUserStatus = async (userId, status) => {
     if (status === 'ACTIVE') {
       const randomPassword = Math.random().toString(36).slice(-5);
       const hashedPassword = await bcrypt.hash(randomPassword, 8);
-      
+
       console.log(`Generated Password: ${randomPassword}`);
-      
+
       user.password = hashedPassword;
+      user.activatedAt = new Date();
       await sendCredentialsEmail(user, randomPassword);
     } else {
       user.password = null;
+      user.activatedAt = null;
     }
 
     await user.save();
