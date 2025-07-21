@@ -5,7 +5,6 @@ exports.create = async (data) => {
 };
 
 
-
 exports.getAllUsers = async () => {
   return await User.findAll();
 };

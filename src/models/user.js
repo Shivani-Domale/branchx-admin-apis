@@ -1,16 +1,9 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      User.hasMany(models.Campaign, { foreignKey: 'userId' });
     }
   }
   User.init({
@@ -20,14 +13,30 @@ module.exports = (sequelize, DataTypes) => {
     country: DataTypes.STRING,
     state: DataTypes.STRING,
     city: DataTypes.STRING,
+    address: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     role: DataTypes.STRING,
     businessName: DataTypes.STRING,
     message: DataTypes.TEXT,
-    status: {type:
-      DataTypes.STRING,
-      defaultValue:'PENDING',
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 'PENDING',
     },
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    resetOtp: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetOtpExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    activatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   }, {
     sequelize,
     modelName: 'User',
