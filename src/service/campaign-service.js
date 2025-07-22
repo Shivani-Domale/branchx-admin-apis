@@ -47,7 +47,8 @@ const getAllCampaigns = async () => {
       SELECT c.*, p.product_type AS "productType"
       FROM "Campaigns" c
       LEFT JOIN "Products" p ON c."productId" = p.id
-      WHERE c."isDeleted" = false
+      WHERE c."isDeleted" = false 
+      AND c."isApproved" = 'APPROVED'
     `, {
       type: sequelize.QueryTypes.SELECT
     });
@@ -75,7 +76,7 @@ const getAllCampaigns = async () => {
         type: sequelize.QueryTypes.SELECT
       });
 
-      campaign.regions = locations;
+   //   campaign.regions = locations;
       campaign.targetDevices = devices;
 
       let files = [];
@@ -166,9 +167,116 @@ const getCampaignById = async (campaignId) => {
   }
 };
 
+// const getApprovedCampaignsByDevice = async (deviceName, location) => {
+//   try {
+//     const campaigns = await sequelize.query(`
+//       SELECT DISTINCT c.id, c."campaignName", c."productFiles", p.product_type AS "productType"
+//       FROM "Campaigns" c
+//       LEFT JOIN "Products" p ON c."productId" = p.id
+//       INNER JOIN "CampaignDeviceTypes" cdt ON cdt."campaignId" = c.id
+//       INNER JOIN "Devices" d ON d.id = cdt."deviceTypeId"
+//       INNER JOIN "CampaignLocations" cl ON cl."campaignId" = c.id
+//       INNER JOIN "Locations" l ON l.id = cl."locationId"
+//       WHERE 
+//         c."isDeleted" = false 
+//         AND c."isApproved" = 'APPROVED'
+//         ${deviceName ? `AND d."deviceName" ILIKE :deviceName` : ''}
+//         ${location ? `AND l."city" ILIKE :location` : ''}
+//     `, {
+//       replacements: {
+//         deviceName: deviceName ? `%${deviceName}%` : undefined,
+//         location: location ? `%${location}%` : undefined
+//       },
+//       type: sequelize.QueryTypes.SELECT
+//     });
+
+//     // Parse productFiles (JSON) if needed
+//     return campaigns.map(campaign => {
+//       try {
+//         campaign.productFiles = typeof campaign.productFiles === 'string'
+//           ? JSON.parse(campaign.productFiles)
+//           : campaign.productFiles;
+//       } catch (e) {
+//         campaign.productFiles = [];
+//       }
+//       return campaign;
+//     });
+
+//   } catch (error) {
+//     throw new Error('Failed to fetch approved campaigns: ' + error.message);
+//   }
+// };
+
+
+
+// const getApprovedCampaignsByDevice = async (deviceName, location) => {
+//     if (deviceName === 'Android') {
+//       deviceName = 'Android';
+//       location = 'Mumbai';
+//     }
+
+
+//     const response = await getAllCampaigns();
+
+//     console.log("Response from getAllCampaigns:", response);
+//   // try {
+//   //   const query = `
+//   //     SELECT DISTINCT 
+//   //       c.id, 
+//   //       c."campaignName", 
+//   //       c."productFiles", 
+//   //       p.product_type AS "productType"
+//   //     FROM "Campaigns" c
+//   //     LEFT JOIN "Products" p ON c."productId" = p.id
+//   //     INNER JOIN "CampaignDeviceTypes" cdt ON cdt."campaignId" = c.id
+//   //     INNER JOIN "Devices" d ON d.id = cdt."deviceTypeId"
+//   //     INNER JOIN "CampaignLocations" cl ON cl."campaignId" = c.id
+//   //     INNER JOIN "Locations" l ON l.id = cl."locationId"
+//   //     WHERE 
+//   //       c."isDeleted" = false 
+//   //       AND c."isApproved" = 'APPROVED'
+//   //     AND TRIM(d."deviceName") ILIKE :deviceName
+//   //   AND TRIM(l."city") ILIKE :location
+//   //   `;
+
+//   //   const campaigns = await sequelize.query(query, {
+//   //     replacements: {
+//   //       deviceName: deviceName ? `%${deviceName}%` : undefined,
+//   //       location: location ? `%${location}%` : undefined
+//   //     },
+//   //     type: sequelize.QueryTypes.SELECT
+//   //   });
+
+//   //   return campaigns;
+
+//   // } catch (error) {
+//   //   console.error('SQL Error:', error);
+//   //   throw new Error('Failed to fetch approved campaigns: ' + error.message);
+//   // }
+
+//   return response;
+// };
+
+const getApprovedCampaignsByDevice = async (deviceName, location) => {
+
+  const response = await getAllCampaigns();
+
+  const filteredCampaigns = response.filter(campaign => {
+    if (!campaign.targetDevices || !Array.isArray(campaign.targetDevices)) return false;
+
+    return campaign.targetDevices.some(device => {
+      return device.deviceName?.toLowerCase().trim() === deviceName.toLowerCase().trim();
+    });
+  });
+
+  return filteredCampaigns;
+};
+
+
 
 
 
 module.exports = {
-  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById
+  getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById,
+  getApprovedCampaignsByDevice
 };

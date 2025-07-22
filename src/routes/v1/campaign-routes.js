@@ -85,4 +85,6 @@ router.get('/getAllCampaigns', CampaignController.fetchCampaigns);
  */
 router.get('/:campaignId/getCampaign', CampaignController.getCampaignDetailsById);
 
+router.get('/external/getApprovedCampaignByDevice', CampaignController.fetchCampaignsByDeviceInfo);
+
 module.exports = router;

@@ -42,12 +42,35 @@ const approveOrRejectCampaign = async (req, res) => {
 
 const fetchCampaigns = async (req, res) => {
   try {
-    const campaigns = await CampaignService.getAllCampaigns();
+    const campaigns = await CampaignService.fetchCampaignsByDeviceInfo();
     res.status(200).json(campaigns);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+const fetchCampaignsByDeviceInfo = async (req, res) => {
+  const { deviceName, location } = req.query;
+
+    //  if (typeof deviceName === 'string' && deviceName.startsWith('{')) {
+    //   deviceName = JSON.parse(deviceName);
+    // }
+    // if (typeof location === 'string' && location.startsWith('{')) {
+    //   location = JSON.parse(location);
+    // }
+    //  console.log(deviceName);
+    //  console.log(location);
+     
+     
+  try {
+    const campaigns = await CampaignService.getApprovedCampaignsByDevice(deviceName, location);
+    res.status(200).json(campaigns);
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const getCampaignDetailsById = async (req, res) => {
 
@@ -71,5 +94,5 @@ const getCampaignDetailsById = async (req, res) => {
 
 
 module.exports = {
-  getCountPendingCampaigns, approveOrRejectCampaign, fetchCampaigns, getCampaignDetailsById
+  getCountPendingCampaigns, approveOrRejectCampaign, fetchCampaigns, getCampaignDetailsById,fetchCampaignsByDeviceInfo
 };
