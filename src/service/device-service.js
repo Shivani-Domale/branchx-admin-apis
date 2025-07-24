@@ -43,16 +43,17 @@ exports.createDevice = async (data) => {
     }
 
     //  Get location ID from name
-    const location = await locationRepository.findLocationByName(locationName?.trim());
-    if (!location) {
-      throw new Error(`Location '${locationName}' not found.`);
-    }
+ //   const location = 12;
+  //  const location = await locationRepository.findLocationByName(locationName?.trim());
+  //   if (!location) {
+  //     throw new Error(`Location '${locationName}' not found.`);
+  //   }
 
     //  Check if device already exists at location
-    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, location.id);
-    if (deviceExists) {
-      throw new Error(`${formattedDeviceName} already exists in ${locationName}`);
-    }
+    // const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, 5);
+    // if (deviceExists) {
+    //   throw new Error(`${formattedDeviceName} already exists in ${locationName}`);
+    // }
 
     //  Use custom price if provided, else use default
     const finalPrice = price !== undefined ? parseFloat(price) : defaultPricesMap[formattedDeviceName];
@@ -63,7 +64,7 @@ exports.createDevice = async (data) => {
       resolutionHeight: parseInt(resolutionHeight),
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
-      locationId: location.id,
+      locationId: 5,
       price: finalPrice,
     });
 
