@@ -75,6 +75,7 @@ exports.createDevice = async (data) => {
   }
 };
 
+
 exports.getAllDevices = async () => {
   try {
     return await deviceRepository.findAll();
