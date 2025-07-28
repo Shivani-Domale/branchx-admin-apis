@@ -43,7 +43,6 @@ const getAllCampaigns = async () => {
       FROM "Campaigns" c
       LEFT JOIN "Products" p ON c."productId" = p.id
       WHERE c."isDeleted" = false
-      ORDER BY c."createdAt" DESC
     `, {
       type: sequelize.QueryTypes.SELECT
     });
@@ -113,6 +112,7 @@ const getAllCampaignsApproved = async () => {
     `, {
       type: sequelize.QueryTypes.SELECT
     });
+
     for (const campaign of campaigns) {
       // Fetch regions
       const locations = await sequelize.query(`
@@ -124,9 +124,10 @@ const getAllCampaignsApproved = async () => {
         replacements: { campaignId: campaign.id },
         type: sequelize.QueryTypes.SELECT
       });
+
       // Fetch devices
       const devices = await sequelize.query(`
-        SELECT d."deviceName"
+        SELECT d."deviceName", d."resolutionHeight", d."resolutionWidth"
         FROM "Devices" d
         INNER JOIN "CampaignDeviceTypes" cdt ON cdt."deviceTypeId" = d.id
         WHERE cdt."campaignId" = :campaignId
@@ -134,8 +135,10 @@ const getAllCampaignsApproved = async () => {
         replacements: { campaignId: campaign.id },
         type: sequelize.QueryTypes.SELECT
       });
-      //   campaign.regions = locations;
+
       campaign.targetDevices = devices;
+
+      // Parse productFiles
       let files = [];
       try {
         if (typeof campaign.productFiles === 'string') {
@@ -146,27 +149,70 @@ const getAllCampaignsApproved = async () => {
       } catch (err) {
         files = [];
       }
-      // Filter all image files
+
       const imageFiles = files.filter(file =>
         typeof file === 'string' &&
         (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png') || file.endsWith('.webp'))
       );
-      // Filter all video files
       const videoFiles = files.filter(file =>
         typeof file === 'string' &&
         (file.endsWith('.mp4') || file.endsWith('.mov') || file.endsWith('.avi') || file.endsWith('.mkv'))
       );
-      // Assign arrays to productFiles field
+
       campaign.productFiles = {
-        images: imageFiles.length > 0 ? imageFiles : [],
-        videos: videoFiles.length > 0 ? videoFiles : []
+        images: imageFiles,
+        videos: videoFiles
       };
+
+      // Rename & Convert
+      campaign.baseValue = campaign.baseBid;
+      campaign.bidValue = parseInt(campaign.maxBid, 10) || 0;
+      campaign.campaignBudget = parseInt(campaign.campaignBudget, 10) || 0;
+
+      // Format Date/Time Fields
+      const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return {
+          date: date.toISOString().split('T')[0], // YYYY-MM-DD
+          time: date.toTimeString().split(' ')[0]  // HH:MM:SS
+        };
+      };
+
+      const start = formatDate(campaign.startDate);
+      const end = formatDate(campaign.endDate);
+      const created = formatDate(campaign.createdAt);
+      const updated = formatDate(campaign.updatedAt);
+
+      campaign.startDate = start.date;
+      campaign.startTime = start.time;
+
+      campaign.endDate = end.date;
+      campaign.endTime = end.time;
+
+      campaign.createdDate = created.date;
+      campaign.createdTime = created.time;
+
+      campaign.updatedDate = updated.date;
+      campaign.updatedTime = updated.time;
+
+      campaign.creativeFiles =  campaign.productFiles;
+
+      // Remove unwanted fields
+      delete campaign.baseBid;
+      delete campaign.maxBid;
+      delete campaign.productId;
+      delete campaign.userId;
+      delete campaign.createdAt;
+      delete campaign.updatedAt;
+      delete campaign.productFiles;
     }
+
     return campaigns;
   } catch (error) {
     throw new Error(`Failed to fetch campaigns: ${error.message}`);
   }
 };
+
 
 const getCampaignById = async (campaignId) => {
   try {
@@ -211,7 +257,6 @@ const getCampaignById = async (campaignId) => {
     throw new Error(`Failed to fetch campaign: ${error.message}`);
   }
 };
-
 const getApprovedCampaignsByDevice = async (deviceName, location) => {
   const response = await getAllCampaignsApproved();
   const filteredCampaigns = response.filter(campaign => {
@@ -226,6 +271,4 @@ module.exports = {
   getPendingCampaignsCount, updateCampaignApprovalStatus, getAllCampaigns, getCampaignById,
   getApprovedCampaignsByDevice
 };
-
-
 
