@@ -3,7 +3,6 @@ const deviceRepository = require('../repositories/device-repository');
 const locationRepository = require('../repositories/location-repository');
 
 const validOrientations = ['Horizontal', 'Vertical'];
-
 // Valid device types and their default prices
 const defaultPricesMap = {
   'Cube': 10,
@@ -14,11 +13,9 @@ const defaultPricesMap = {
   'Tv': 10,
   'Ipad': 10,
 };
-
 // Convert to CamelCase
 const toCamelCase = (text) =>
   text?.toLowerCase()?.replace(/\b\w/g, (char) => char.toUpperCase()) || '';
-
 exports.createDevice = async (data) => {
   try {
     const {
@@ -29,51 +26,45 @@ exports.createDevice = async (data) => {
       locationName,
       price, // optional custom price
     } = data;
-
     //  Format and validate device name
     const formattedDeviceName = toCamelCase(deviceName?.trim());
     if (!defaultPricesMap[formattedDeviceName]) {
       throw new Error(`Invalid device type. Allowed types: ${Object.keys(defaultPricesMap).join(', ')}`);
     }
-
     //  Validate orientation
     const cleanOrientation = orientation?.trim();
     if (!validOrientations.includes(cleanOrientation)) {
       throw new Error(`Invalid orientation. Allowed values: ${validOrientations.join(', ')}`);
     }
-
     //  Get location ID from name
-    const location = await locationRepository.findLocationByName(locationName?.trim());
-    if (!location) {
-      throw new Error(`Location '${locationName}' not found.`);
-    }
-
+ //   const location = 12;
+  //  const location = await locationRepository.findLocationByName(locationName?.trim());
+  //   if (!location) {
+  //     throw new Error(`Location '${locationName}' not found.`);
+  //   }
     //  Check if device already exists at location
-    const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, location.id);
-    if (deviceExists) {
-      throw new Error(`${formattedDeviceName} already exists in ${locationName}`);
-    }
-
+    // const deviceExists = await deviceRepository.isDeviceExists(formattedDeviceName, 5);
+    // if (deviceExists) {
+    //   throw new Error(`${formattedDeviceName} already exists in ${locationName}`);
+    // }
     //  Use custom price if provided, else use default
     const finalPrice = price !== undefined ? parseFloat(price) : defaultPricesMap[formattedDeviceName];
-
     //  Create device
     const newDevice = await deviceRepository.create({
       deviceName: formattedDeviceName,
       resolutionHeight: parseInt(resolutionHeight),
       resolutionWidth: parseInt(resolutionWidth),
       orientation: cleanOrientation,
-      locationId: location.id,
+      locationId: 5,
       price: finalPrice,
     });
-
     return newDevice;
-
   } catch (error) {
     console.error(`Error in createDevice: ${error.message}`);
     throw error;
   }
 };
+
 
 
 exports.getAllDevices = async () => {
